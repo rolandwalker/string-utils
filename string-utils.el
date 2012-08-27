@@ -4,8 +4,8 @@
 ;;
 ;; Author: Roland Walker walker@pobox.com
 ;; URL: https://github.com/rolandwalker/string-utils.el
-;; Version: 0.0.1
-;; Last-Updated: 21 Aug 2012
+;; Version: 0.0.2
+;; Last-Updated: 27 Aug 2012
 ;; EmacsWiki: StringUtils
 ;; Keywords:
 ;;
@@ -29,6 +29,7 @@
 ;;    string-utils-quotemeta
 ;;    string-utils-pad
 ;;    string-utils-pad-list
+;;    string-utils-propertize-fillin
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -44,6 +45,17 @@
 ;; Bugs
 ;;
 ;; TODO
+;;
+;;    In string-utils-propertize-fillin, strip properties which are
+;;    set to nil at start, which will create more contiguity in the
+;;    result see this example, where the first two characters have the
+;;    same properties
+;;
+;;       (let ((text "text"))
+;;         (add-text-properties 0 1 '(face nil) text)
+;;         (add-text-properties 2 3 '(face error) text)
+;;         (string-utils-propertize-fillin text 'face 'highlight)
+;;         text)
 ;;
 ;;; License
 ;;
@@ -88,6 +100,9 @@
 ;; for callf, callf2
 (eval-when-compile
   (require 'cl))
+
+(autoload 'font-lock-fillin-text-property "font-lock"
+  "Fill in one property of the text from START to END.")
 
 ;; variables
 
@@ -334,6 +349,19 @@ Returns padded STR-LIST."
           (setq mode (* -1 mode))))
       (mapcar #'(lambda (str)
                   (string-utils-pad str width mode char throw-error)) str-list))))
+
+(defun string-utils-propertize-fillin (str-val &rest properties)
+  "Return a copy of STRING with text properties added, without overriding.
+
+Works exactly like `propertize', except that (character-by-character)
+already existing properties are respected."
+  (unless (= 0 (% (length properties) 2))
+    (error "Wrong number of arguments"))
+  (while properties
+    (let ((prop (pop properties))
+          (val  (pop properties)))
+      (font-lock-fillin-text-property 0 (length str-val) prop val str-val)))
+   str-val)
 
 (provide 'string-utils)
 
