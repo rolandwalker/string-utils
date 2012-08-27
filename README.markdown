@@ -20,6 +20,7 @@ The following functions are provided:
 	string-utils-quotemeta
 	string-utils-pad
 	string-utils-pad-list
+    string-utils-propertize-fillin
 
 The most complex function is `string-utils-pad`, the docstring
 for which is reproduced below:
@@ -53,3 +54,9 @@ Tabs are expanded to spaces according to the value of
 `tab-width`.
 
 Returns a padded copy of string STR-VAL.
+
+Compatibility and Requirements
+------------------------------
+Tested only on GNU Emacs version 24.1
+
+No external dependencies

@@ -38,9 +38,11 @@
 ;;
 ;; Notes
 ;;
-;; Compatibility
+;; Compatibility and Requirements
 ;;
 ;;    Tested only on GNU Emacs version 24.1
+;;
+;;    No external dependencies
 ;;
 ;; Bugs
 ;;
