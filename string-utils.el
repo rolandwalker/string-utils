@@ -108,7 +108,11 @@
 
 ;; variables
 
-(defvar string-utils-whitespace (concat [#x0000d  ; "Carriage Return (CR)"
+(defvar string-utils-whitespace (concat
+                                 (apply 'vector
+                                        (mapcar #'(lambda (x)
+                                                    (decode-char 'ucs x))
+                                                '(#x0000d  ; "Carriage Return (CR)"
                                          #x00088  ; "Character Tabulation Set"
                                          #x00089  ; "Character Tabulation With Justification"
                                          #x00009  ; "Character Tabulation" (ordinary ASCII tab)
@@ -145,7 +149,7 @@
                                          #x0feff  ; "Zero Width No-Break Space"
                                          #x0200c  ; "Zero Width Non-Joiner"
                                          #x0200b  ; "Zero Width Space"
-                                         ])
+                                                  )))
   "Definition of whitespace characters used by string-utils.
 
 Includes Unicode whitespace characters.")
