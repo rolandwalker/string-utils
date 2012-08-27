@@ -7,7 +7,7 @@
 ;; Version: 0.0.2
 ;; Last-Updated: 27 Aug 2012
 ;; EmacsWiki: StringUtils
-;; Keywords:
+;; Keywords: extensions
 ;;
 ;; Simplified BSD License
 ;;
