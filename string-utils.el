@@ -145,7 +145,7 @@
                                                   #x02060  ; "Word Joiner"
                                                   #x0feff  ; "Zero Width No-Break Space"
                                                   #x0200b  ; "Zero Width Space"
-                                                  )))
+                                                  ))))
   "Definition of whitespace characters used by string-utils.
 
 Includes Unicode whitespace characters.")
