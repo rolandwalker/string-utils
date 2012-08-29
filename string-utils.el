@@ -4,8 +4,8 @@
 ;;
 ;; Author: Roland Walker walker@pobox.com
 ;; URL: https://github.com/rolandwalker/string-utils.el
-;; Version: 0.0.2
-;; Last-Updated: 27 Aug 2012
+;; Version: 0.0.3
+;; Last-Updated: 28 Aug 2012
 ;; EmacsWiki: StringUtils
 ;; Keywords: extensions
 ;;
