@@ -20,18 +20,18 @@
 ;;
 ;; The following functions are provided:
 ;;
-;;    string-utils-stringify-anything
-;;    string-utils-has-darkspace-p
-;;    string-utils-has-whitespace-p
-;;    string-utils-trim-whitespace
-;;    string-utils-compress-whitespace
-;;    string-utils-string-repeat
-;;    string-utils-escape-double-quotes
-;;    string-utils-quotemeta
-;;    string-utils-pad
-;;    string-utils-pad-list
-;;    string-utils-propertize-fillin
-;;    string-utils-plural-ending
+;;    `string-utils-stringify-anything'
+;;    `string-utils-has-darkspace-p'
+;;    `string-utils-has-whitespace-p'
+;;    `string-utils-trim-whitespace'
+;;    `string-utils-compress-whitespace'
+;;    `string-utils-string-repeat'
+;;    `string-utils-escape-double-quotes'
+;;    `string-utils-quotemeta'
+;;    `string-utils-pad'
+;;    `string-utils-pad-list'
+;;    `string-utils-propertize-fillin'
+;;    `string-utils-plural-ending'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -52,8 +52,8 @@
 ;;
 ;;    In string-utils-propertize-fillin, strip properties which are
 ;;    set to nil at start, which will create more contiguity in the
-;;    result see this example, where the first two characters have the
-;;    same properties
+;;    result.  See this example, where the first two characters have
+;;    the same properties
 ;;
 ;;       (let ((text "text"))
 ;;         (add-text-properties 0 1 '(face nil) text)
@@ -390,6 +390,7 @@ Intended to be used in a format string as follows:
 ;; End:
 ;;
 ;; LocalWords:  StringUtils ARGS alist utils darkspace quotemeta
+;; LocalWords:  propertize fillin callf MULTI
 ;;
 
 ;;; string-utils.el ends here
