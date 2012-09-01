@@ -31,6 +31,7 @@
 ;;    string-utils-pad
 ;;    string-utils-pad-list
 ;;    string-utils-propertize-fillin
+;;    string-utils-plural-ending
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -365,6 +366,16 @@ already existing properties are respected."
           (val  (pop properties)))
       (font-lock-fillin-text-property 0 (length str-val) prop val str-val)))
    str-val)
+
+(defun string-utils-plural-ending (num)
+  "Return \"s\" or \"\", depending on whether NUM requires a plural in English.
+
+Intended to be used in a format string as follows:
+
+    (message \"%s item%s deleted\" del-counter (string-utils-plural-ending del-counter))"
+  (if (and (numberp num)
+           (= num 1))
+      "" "s"))
 
 (provide 'string-utils)
 
