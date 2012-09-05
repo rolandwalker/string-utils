@@ -57,6 +57,6 @@ Returns a padded copy of string STR-VAL.
 
 Compatibility and Requirements
 ------------------------------
-Tested only on GNU Emacs version 24.1
+Tested only GNU Emacs versions 23.3 and 24.1
 
 No external dependencies
