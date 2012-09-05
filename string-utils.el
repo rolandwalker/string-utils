@@ -180,7 +180,8 @@ on success.
 
 If optional ASCII-ONLY is set, use an ASCII-only definition
 of whitespace characters."
-  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj))))
+  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj)))
+        (string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
     (string-match-p (concat "[^" string-utils-whitespace "]") str-val)))
 
 ;;;###autoload
