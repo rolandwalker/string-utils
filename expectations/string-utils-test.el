@@ -222,3 +222,17 @@
            (half-prop (concat start end-with-prop)))
       (setq half-prop (string-utils-propertize-fillin half-prop :face 'bold))
       (get-text-property 5 :face half-prop))))
+
+;;
+;; Emacs
+;;
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; mangle-whitespace: t
+;; require-final-newline: t
+;; coding: utf-8
+;; byte-compile-warnings: (not cl-functions redefine)
+;; End:
+;;
+
+;;; string-utils-test.el ends here

@@ -17,8 +17,8 @@ build :
 test :
 	@cd $(TEST_DIR)          && \
 	rm -f $(TEST_OUTPUT)     && \
-	$(EMACS) $(EMACS_FLAGS) -L . -L .. -l el-expectations -f batch-expectations $(TEST_OUTPUT) *.el; \
-	cat $(TEST_OUTPUT)
+	$(EMACS) $(EMACS_FLAGS) -L . -L .. -l el-expectations -f batch-expectations $(TEST_OUTPUT) *.el
+	@test -e $(TEST_DIR)/$(TEST_OUTPUT) && cat $(TEST_DIR)/$(TEST_OUTPUT)
 
 clean :
-	@rm -f *.elc *~ $(TEST_DIR)/$(TEST_OUTPUT)
+	@rm -f *.elc *~ */*.elc */*~ $(TEST_DIR)/$(TEST_OUTPUT)
