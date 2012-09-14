@@ -1,9 +1,11 @@
 Overview
 ========
+
 String-manipulation utilities for Emacs Lisp.
 
 string-utils
 ------------
+
 String-utils is a collection of functions for string manipulation.
 This library has no user-level interface; it is only useful
 for programming in Emacs Lisp.
@@ -20,7 +22,7 @@ The following functions are provided:
 	string-utils-quotemeta
 	string-utils-pad
 	string-utils-pad-list
-    string-utils-propertize-fillin
+	string-utils-propertize-fillin
 
 The most complex function is `string-utils-pad`, the docstring
 for which is reproduced below:
@@ -57,6 +59,7 @@ Returns a padded copy of string STR-VAL.
 
 Compatibility and Requirements
 ------------------------------
-Tested only GNU Emacs versions 23.3 and 24.1
+
+Tested on GNU Emacs versions 23.3 and 24.1
 
 No external dependencies
