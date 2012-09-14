@@ -102,8 +102,7 @@
 ;;; requires
 
 ;; for callf, callf2
-(eval-when-compile
-  (require 'cl))
+(require 'cl)
 
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
@@ -388,6 +387,7 @@ Intended to be used in a format string as follows:
 ;; mangle-whitespace: t
 ;; require-final-newline: t
 ;; coding: utf-8
+;; byte-compile-warnings: (not cl-functions)
 ;; End:
 ;;
 ;; LocalWords:  StringUtils ARGS alist utils darkspace quotemeta
