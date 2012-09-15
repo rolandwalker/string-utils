@@ -369,6 +369,7 @@ Returns padded STR-LIST."
       (mapcar #'(lambda (str)
                   (string-utils-pad str width mode char throw-error)) str-list))))
 
+;;;###autoload
 (defun string-utils-propertize-fillin (str-val &rest properties)
   "Return a copy of STRING with text properties added, without overriding.
 
@@ -382,6 +383,7 @@ already existing properties are respected."
       (font-lock-fillin-text-property 0 (length str-val) prop val str-val)))
    str-val)
 
+;;;###autoload
 (defun string-utils-plural-ending (num)
   "Return \"s\" or \"\", depending on whether NUM requires a plural in English.
 
