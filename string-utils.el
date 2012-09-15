@@ -62,6 +62,8 @@
 ;;         (string-utils-propertize-fillin text 'face 'highlight)
 ;;         text)
 ;;
+;;     Adapt squeeze-filename for URLs
+;;
 ;;; License
 ;;
 ;; Simplified BSD License:
@@ -163,15 +165,27 @@ Includes Unicode whitespace characters.")
 Contrary to usual conventions, return the empty string for nil.
 
 Sequences are flattened down to atoms and joined with string
-SEPARATOR, which defaults to a single space."
+SEPARATOR, which defaults to a single space.
+
+This is not a pretty-printer for OBJ, but a way to look at
+the *contents* of OBJ (so much as is possible) as if it was
+an ordinary string."
   (callf or separator " ")
   (cond
+
+    ;; nil
     ((null obj)
      "")
+
+    ;; string
     ((stringp obj)
      obj)
+
+    ;; symbol
     ((symbolp obj)
      (symbol-name obj))
+
+    ;; number
     ((numberp obj)
      (number-to-string obj))
 
@@ -217,6 +231,7 @@ SEPARATOR, which defaults to a single space."
 
     ;; list
     ((listp obj)
+     ;; convert cons cells into lists before mapconcat chokes
      (when (cdr (last obj))
        ;; todo isn't there a more succinct expression for this?
        (setf (nthcdr (safe-length obj) obj) (list (nthcdr (safe-length obj) obj))))
@@ -242,6 +257,8 @@ SEPARATOR, which defaults to a single space."
     ((vectorp obj)
      (mapconcat #'(lambda (x)
                     (string-utils-stringify-anything x separator)) obj separator))
+
+    ;; fallback
     (t
      (format "%s" obj))))
 
@@ -431,10 +448,13 @@ Returns padded STR-LIST."
 
 ;;;###autoload
 (defun string-utils-propertize-fillin (str-val &rest properties)
-  "Return a copy of STRING with text properties added, without overriding.
+  "Return a copy of STR-VAL with text properties added, without overriding.
 
 Works exactly like `propertize', except that (character-by-character)
-already existing properties are respected."
+already existing properties are respected.
+
+STR-VAL and PROPERTIES are treated as documented for the STRING
+and PROPERTIES arguments to `propertize'."
   (unless (= 0 (% (length properties) 2))
     (error "Wrong number of arguments"))
   (while properties
@@ -462,9 +482,13 @@ When shortening file or buffer names for presentation to human
 readers, it is often preferable not to truncate the ends, but to
 remove leading or middle portions of the string.
 
-This function
+This function keeps basename intact, and (failing that) the
+beginning and end of the basename, so that a shortened file or
+buffer name is more identifiable to a human reader.
 
-   1.  Accepts file names or buffer names.
+The heuristic
+
+   1.  Works equally for file names or buffer names.
 
    2.  Applies abbreviations to file names such as \"~\" for home
        directory.
@@ -477,7 +501,7 @@ This function
    4.  Shortens the basename of NAME if needed, preserving the
        meaningful file extension.
 
-The string returned is always equal to MAXLEN or shorter.
+The string returned is as long as MAXLEN or shorter.
 
 When PATH-REMOVAL is non nil, it is permitted to shorten a
 pathname by removing the directory components completely,

@@ -187,6 +187,7 @@
     ;; Narrow No-Break Space
     (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii-only 'multi-line)))
 
+
 (expectations
 
   (desc "string-utils-compress-whitespace")
@@ -205,6 +206,7 @@
     ;; Narrow No-Break Space
     (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii-only)))
 
+
 (expectations
 
   (desc "string-utils-string-repeat")
@@ -214,6 +216,7 @@
 
   (expect "abcabcabcabcabc"
     (string-utils-string-repeat "abc" 5)))
+
 
 (expectations
 
@@ -225,6 +228,7 @@
   (expect "\\\"text\\\""
     (string-utils-escape-double-quotes "\"text\"")))
 
+
 (expectations
 
   (desc "string-utils-quotemeta")
@@ -234,6 +238,7 @@
 
   (expect "this\\ is\\ a\\ shell\\ command\\:\\ git\\ add\\ newfile\\.txt\\ \\&\\&\\ git\\ commit\\ \\-m\\ \\'initial\\ commit\\'"
     (string-utils-quotemeta "this is a shell command: git add newfile.txt && git commit -m 'initial commit'")))
+
 
 (expectations
 
@@ -266,6 +271,7 @@
   (expect "..text        words.."
     (let ((tab-width 8))
       (string-utils-pad "text\twords" 21 'center ?.))))
+
 
 (expectations
 
@@ -303,6 +309,7 @@
 
   (expect (error)
     (string-utils-pad-list '("this" "is" "for" "testing") nil 4 nil nil 'throw-error)))
+
 
 (expectations
 
