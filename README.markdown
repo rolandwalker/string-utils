@@ -23,6 +23,7 @@ The following functions are provided:
 	string-utils-pad
 	string-utils-pad-list
 	string-utils-propertize-fillin
+	string-utils-squeeze-filename
 
 The most complex function is `string-utils-pad`, the docstring
 for which is reproduced below:

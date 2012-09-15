@@ -265,6 +265,248 @@
       (setq half-prop (string-utils-propertize-fillin half-prop :face 'bold))
       (get-text-property 5 :face half-prop))))
 
+
+(expectations
+
+  (desc "string-utils-squeeze-filename")
+
+  (expect "~/.emacs.d/lisp/string-utils.el"
+    (string-utils-squeeze-filename (concat (expand-file-name "~/") ".emacs.d/lisp/string-utils.el") 100))
+
+  (expect "…/projects/repos/lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 50 nil "…"))
+
+  (expect "…/lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 40 nil "…"))
+
+  (expect "…/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 30 nil "…"))
+
+  (expect "…/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 20 nil "…"))
+
+  (expect "…/string….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 12 nil "…"))
+
+  (expect "…/strin….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 11 nil "…"))
+
+  (expect "…/stri….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 10 nil "…"))
+
+  (expect "…/str….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 9 nil "…"))
+
+  (expect "…/st….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 8 nil "…"))
+
+  (expect "…/s….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 7 nil "…"))
+
+  (expect "…/str…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 6 nil "…"))
+
+  (expect "…/st…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 5 nil "…"))
+
+  (expect "…/s…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 4 nil "…"))
+
+  (expect "…/…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 3 nil "…"))
+
+  (expect "……"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 2 nil "…"))
+
+  (expect "…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 1 nil "…"))
+
+  (expect ""
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 nil "…"))
+
+  (expect "string-u….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 12 t "…"))
+
+  (expect "string-….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 11 t "…"))
+
+  (expect "string….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 10 t "…"))
+
+  (expect "strin….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 9 t "…"))
+
+  (expect "stri….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 8 t "…"))
+
+  (expect "str….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 7 t "…"))
+
+  (expect "st….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 6 t "…"))
+
+  (expect "s….el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 5 t "…"))
+
+  (expect "str…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 4 t "…"))
+
+  (expect "st…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 3 t "…"))
+
+  (expect "s…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 2 t "…"))
+
+  (expect "…"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 1 t "…"))
+
+  (expect ""
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "…"))
+
+  (expect ".../repos/lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 50 nil "..."))
+
+  (expect ".../lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 40 nil "..."))
+
+  (expect ".../lisp/.../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 30 nil "..."))
+
+  (expect ".../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 20 nil "..."))
+
+  (expect ".../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 19 nil "..."))
+
+  (expect ".../string-u....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 18 nil "..."))
+
+  (expect ".../string-....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 17 nil "..."))
+
+  (expect ".../string....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 16 nil "..."))
+
+  (expect ".../strin....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 15 nil "..."))
+
+  (expect ".../stri....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 14 nil "..."))
+
+  (expect ".../str....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 13 nil "..."))
+
+  (expect ".../st....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 12 nil "..."))
+
+  (expect ".../s....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 11 nil "..."))
+
+  (expect ".../str..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 10 nil "..."))
+
+  (expect ".../st..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 9 nil "..."))
+
+  (expect ".../s..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 8 nil "..."))
+
+  (expect ".../s.."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 7 nil "..."))
+
+  (expect ".../.."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 6 nil "..."))
+
+  (expect "....."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 5 nil "..."))
+
+  (expect "...."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 4 nil "..."))
+
+  (expect "..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 3 nil "..."))
+
+  (expect ".."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 2 nil "..."))
+
+  (expect "."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 1 nil "..."))
+
+  (expect ".../repos/lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 50 t "..."))
+
+  (expect ".../lisp/string-utils/string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 40 t "..."))
+
+  (expect ".../lisp/.../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 30 t "..."))
+
+  (expect ".../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 20 t "..."))
+
+  (expect ".../string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 19 t "..."))
+
+  (expect "string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 18 t "..."))
+
+  (expect "string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 17 t "..."))
+
+  (expect "string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 16 t "..."))
+
+  (expect "string-utils.el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 15 t "..."))
+
+  (expect "string-u....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 14 t "..."))
+
+  (expect "string-....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 13 t "..."))
+
+  (expect "string....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 12 t "..."))
+
+  (expect "strin....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 11 t "..."))
+
+  (expect "stri....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 10 t "..."))
+
+  (expect "str....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 9 t "..."))
+
+  (expect "st....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 8 t "..."))
+
+  (expect "s....el"
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 7 t "..."))
+
+  (expect "str..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 6 t "..."))
+
+  (expect "st..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 5 t "..."))
+
+  (expect "s..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 4 t "..."))
+
+  (expect "..."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 3 t "..."))
+
+  (expect ".."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 2 t "..."))
+
+  (expect "."
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 1 t "..."))
+
+  (expect ""
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "..."))
+
+  (expect ""
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "...")))
+
 ;;
 ;; Emacs
 ;;

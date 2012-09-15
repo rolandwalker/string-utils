@@ -32,6 +32,7 @@
 ;;    `string-utils-pad-list'
 ;;    `string-utils-propertize-fillin'
 ;;    `string-utils-plural-ending'
+;;    `string-utils-squeeze-filename'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -394,6 +395,131 @@ Intended to be used in a format string as follows:
            (= num 1))
       "" "s"))
 
+;;;###autoload
+(defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis)
+  "Intelligibly squeeze file or buffer name NAME to fit within MAXLEN.
+
+When shortening file or buffer names for presentation to human
+readers, it is often preferable not to truncate the ends, but to
+remove leading or middle portions of the string.
+
+This function
+
+   1.  Accepts file names or buffer names.
+
+   2.  Applies abbreviations to file names such as \"~\" for home
+       directory.
+
+   3.  Selectively removes the longest leading directory
+       components from a path, preferring to keep the rightmost
+       components, leaving a single ellipsis where any number of
+       path elements were removed.
+
+   4.  Shortens the basename of NAME if needed, preserving the
+       meaningful file extension.
+
+The string returned is always equal to MAXLEN or shorter.
+
+When PATH-REMOVAL is non nil, it is permitted to shorten a
+pathname by removing the directory components completely,
+substituting no ellipsis.
+
+ELLIPSIS is a string inserted wherever characters were removed.
+It defaults to the UCS character \"Horizontal Ellipsis\", or
+\"...\" if extended characters are not displayable."
+  ;; character x2026 = Horizontal Ellipsis
+  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (cond
+    ;; corner cases for tiny MAXLEN
+    ((< maxlen 0)
+     (error "Length must be greater than or equal to 0"))
+    ((= maxlen 0)
+     "")
+    ((and (<= maxlen (length ellipsis))
+          (> (length ellipsis) 0))
+     (substring ellipsis 0 maxlen))
+    (t
+     ;; most cases
+     (save-match-data
+       (let ((dir-sep "/")
+             (path nil)
+             (used-last-elt 'first)
+             (orig-name nil)
+             (added-path ""))
+         (when (bufferp name)
+           (setq name (buffer-name name)))
+         (setq path (nreverse (split-string (directory-file-name (abbreviate-file-name name)) dir-sep)))
+         (setq name (pop path))
+         (setq orig-name name)
+
+         ;; prepend path components, so long as within MAXLEN
+         (while path
+           (if (and (<= (+ (length (car path))
+                           (length name)
+                           (length dir-sep)
+                           (if (> (length path) 1) (+ (length dir-sep) (length ellipsis)) 0))
+                        maxlen)
+                    ;; leading "/" followed by ellipsis is not meaningful
+                    (not (and (not used-last-elt)
+                              (= (length (car path)) 0))))
+               (progn
+                 (setq added-path (concat (car path) dir-sep added-path))
+                 (setq name (concat (car path) dir-sep name))
+                 (setq used-last-elt t))
+             ;; else
+             (when used-last-elt
+               (setq name (concat ellipsis dir-sep name))
+               (setq added-path (concat ellipsis dir-sep added-path)))
+             (setq used-last-elt nil))
+           (pop path))
+
+         ;; PATH-REMOVAL logic
+         (when (and (> (length name) maxlen)
+                    path-removal)
+           (setq added-path "")
+           (setq name orig-name))
+
+         ;; squeeze basename
+         (when (> (length name) maxlen)
+
+           ;; find extension or tail
+           (let ((extension ""))
+             (when (string-match "\\(\\.[^.]\\{1,6\\}\\)\\'" name)
+               (setq extension (match-string 1 name))
+               (replace-match "" t t name 0))
+             (when (and (equal extension "")
+                        (string-match ".\\(.\\{4\\}\\)\\'" name))
+               (setq extension (match-string 1 name))
+               (replace-match "" t t name 1))
+
+             ;; these conditionals are just corner cases for small MAXLEN
+             (when (>= (+ (length extension) (length ellipsis)) maxlen)
+               (setq extension ""))
+             (when (and (not (string-match-p "\\`\\." extension))
+                        (>= (+ (* 2 (length extension)) (length ellipsis)) maxlen))
+               (setq extension ""))
+             (when (<= (- maxlen (length ellipsis) (length extension))
+                       (length added-path))
+               (setq extension ""))
+             (when (and (>= (+ (length extension) (length ellipsis)) maxlen)
+                        (> (length ellipsis) 1))
+               (callf substring ellipsis 0 (1- (length ellipsis))))
+             (when (and (<= (- maxlen (length ellipsis) (length extension))
+                            (length added-path))
+                        (> (length ellipsis) 1))
+               (callf substring ellipsis 0 (1- (length ellipsis))))
+
+             ;; truncate and add back ellipsis and extension
+             (callf substring name 0 (- maxlen (length ellipsis) (length extension)))
+             (callf concat name ellipsis extension)))))
+
+     ;; hardcode one last corner case
+     (when (equal name ".../.")
+       (setq name "....."))
+
+     ;; defensive driving - name should already be <= than MAXLEN
+     (substring name 0 (min maxlen (length name))))))
+
 (provide 'string-utils)
 
 ;;
@@ -408,7 +534,7 @@ Intended to be used in a format string as follows:
 ;; End:
 ;;
 ;; LocalWords:  StringUtils ARGS alist utils darkspace quotemeta
-;; LocalWords:  propertize fillin callf MULTI
+;; LocalWords:  propertize fillin callf MULTI MAXLEN
 ;;
 
 ;;; string-utils.el ends here
