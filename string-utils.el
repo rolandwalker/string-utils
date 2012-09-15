@@ -174,12 +174,71 @@ SEPARATOR, which defaults to a single space."
      (symbol-name obj))
     ((numberp obj)
      (number-to-string obj))
+
+    ;; frame
+    ((framep obj)
+     (or (ignore-errors (frame-parameter obj 'name)) ""))
+
+    ;; window
+    ((windowp obj)
+     (buffer-name (window-buffer obj)))
+
+    ;; marker
+    ((markerp obj)
+     (string-utils-stringify-anything (list (marker-position obj)
+                                            (marker-buffer obj)) separator))
+    ;; overlay
+    ((overlayp obj)
+     (string-utils-stringify-anything (list (overlay-start obj)
+                                            (overlay-end obj)
+                                            (overlay-buffer obj)) separator))
+    ;; process
+    ((processp obj)
+     (string-utils-stringify-anything (process-command obj) separator))
+
+    ;; hash-table
+    ((hash-table-p obj)
+     (let ((output nil))
+       (maphash #'(lambda (k v)
+                    (push (string-utils-stringify-anything k separator) output)
+                    (push (string-utils-stringify-anything v separator) output)) obj)
+       (mapconcat 'identity (nreverse output) separator)))
+
+    ;; compiled byte-code
+    ((byte-code-function-p obj)
+     (mapconcat #'(lambda (x)
+                    (string-utils-stringify-anything x separator)) (append obj nil) separator))
+
+    ;; keymap, function
+    ((or (keymapp obj)
+         (functionp obj)
+         (frame-configuration-p obj))
+     (string-utils-stringify-anything (cdr obj) separator))
+
+    ;; list
     ((listp obj)
      (when (cdr (last obj))
        ;; todo isn't there a more succinct expression for this?
        (setf (nthcdr (safe-length obj) obj) (list (nthcdr (safe-length obj) obj))))
+     (let ((output nil))
+       (push (string-utils-stringify-anything (car obj) separator) output)
+       (when (cdr obj)
+         (push (string-utils-stringify-anything (cdr obj) separator) output))
+       (mapconcat 'identity (nreverse output) separator)))
+
+    ;; defstruct
+    ((and (vectorp obj)
+          (symbolp (aref obj 0))
+          (string-match-p "\\`cl-" (symbol-name (aref obj 0))))
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator)) obj separator))
+                    (string-utils-stringify-anything x separator)) (cdr (append obj nil)) separator))
+
+    ;; bool-vector
+    ((bool-vector-p obj)
+     (mapconcat #'(lambda (x)
+                    (string-utils-stringify-anything x separator)) (append obj nil) separator))
+
+    ;; ordinary vector
     ((vectorp obj)
      (mapconcat #'(lambda (x)
                     (string-utils-stringify-anything x separator)) obj separator))

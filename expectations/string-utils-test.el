@@ -32,7 +32,68 @@
     (string-utils-stringify-anything '[1 2 [3 4]]))
 
   (expect "1 2 3 string"
-    (string-utils-stringify-anything '[1 2 [3 string]])))
+    (string-utils-stringify-anything '[1 2 [3 string]]))
+
+  (expect 0
+    (string-match-p "\\`[0-9.-]+\\'" (string-utils-stringify-anything (make-random-state) "")))
+
+  (expect "t t t t t t t t t t"
+    (string-utils-stringify-anything (make-bool-vector 10 1)))
+
+  (expect ""
+    (string-utils-stringify-anything (make-bool-vector 10 nil) ""))
+
+  ;; not really sure if order is guaranteed here
+  (expect "one 1 two 2"
+    (let ((tester (make-hash-table)))
+      (puthash "one" 1 tester)
+      (puthash "two" 2 tester)
+      (string-utils-stringify-anything tester)))
+
+  (expect ""
+    (string-utils-stringify-anything (make-byte-code nil nil nil nil) ""))
+
+  (expect "args...0"
+    (string-utils-stringify-anything (make-byte-code '(args) nil nil 0) "."))
+
+  (expect "1 *scratch*"
+    (with-current-buffer "*scratch*"
+      (let ((tester (make-marker)))
+        (move-marker tester 1)
+        (string-utils-stringify-anything tester))))
+
+  (expect ""
+    (string-utils-stringify-anything (make-marker) ""))
+
+  (expect "1 1 *scratch*"
+    (with-current-buffer "*scratch*"
+      (let ((tester (make-overlay 1 1)))
+        (string-utils-stringify-anything tester))))
+
+  (expect ""
+    (with-current-buffer "*scratch*"
+      (let ((tester (make-overlay 1 1)))
+        (delete-overlay tester)
+        (string-utils-stringify-anything tester ""))))
+
+  (expect ""
+    (string-utils-stringify-anything (make-sparse-keymap)))
+
+  (expect "97 ignore"
+    (let ((tester (make-sparse-keymap)))
+       (define-key tester (kbd "a") 'ignore)
+       (string-utils-stringify-anything tester)))
+
+  (expect "99 98 ignore 97 ignore"
+    (let ((tester  (make-sparse-keymap))
+          (tester2 (make-sparse-keymap)))
+       (define-key tester  (kbd "a") 'ignore)
+       (define-key tester2 (kbd "b") 'ignore)
+       (define-key tester  (kbd "c")  tester2)
+       (string-utils-stringify-anything tester)))
+
+  (expect "sleep 10"
+     (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10"))))
 
 
 (expectations
