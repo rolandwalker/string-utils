@@ -14,7 +14,25 @@
     (string-utils-stringify-anything nil))
 
   (expect "symbol"
-    (string-utils-stringify-anything 'symbol)))
+    (string-utils-stringify-anything 'symbol))
+
+  (expect "1 2"
+    (string-utils-stringify-anything (list 1 2)))
+
+  (expect "1 2"
+    (string-utils-stringify-anything (cons 1 2)))
+
+  (expect "123"
+    (string-utils-stringify-anything (list 1 2 3) ""))
+
+  (expect "1 2 3 4"
+    (string-utils-stringify-anything '(1 2 (3 4))))
+
+  (expect "1 2 3 4"
+    (string-utils-stringify-anything '[1 2 [3 4]]))
+
+  (expect "1 2 3 string"
+    (string-utils-stringify-anything '[1 2 [3 string]])))
 
 
 (expectations
@@ -39,7 +57,13 @@
     (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'ascii-only))
 
   (expect nil
-    (string-utils-has-darkspace-p nil)))
+    (string-utils-has-darkspace-p nil))
+
+  (expect 0
+    (string-utils-has-darkspace-p '(1 2 3)))
+
+  (expect nil
+    (string-utils-has-darkspace-p '(" " " " " "))))
 
 
 (expectations
@@ -67,7 +91,13 @@
     (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'ascii-only))
 
   (expect nil
-    (string-utils-has-whitespace-p nil)))
+    (string-utils-has-whitespace-p nil))
+
+  (expect nil
+    (string-utils-has-whitespace-p '(1 2 3)))
+
+  (expect 1
+    (string-utils-has-whitespace-p '(1 " " 3))))
 
 
 (expectations

@@ -156,19 +156,34 @@ Includes Unicode whitespace characters.")
 ;;; utility functions
 
 ;;;###autoload
-(defun string-utils-stringify-anything (obj)
+(defun string-utils-stringify-anything (obj &optional separator)
   "Coerce any object OBJ into a string.
 
-Contrary to usual conventions, return the empty string for nil."
-  (if (null obj)
-    ""
-    ;; else
-    (typecase obj
-      (string   obj)
-      (symbol   (symbol-name obj))
-      (integer  (number-to-string obj))
-      (float    (number-to-string obj))
-      (t        (format "%s" obj)))))
+Contrary to usual conventions, return the empty string for nil.
+
+Sequences are flattened down to atoms and joined with string
+SEPARATOR, which defaults to a single space."
+  (callf or separator " ")
+  (cond
+    ((null obj)
+     "")
+    ((stringp obj)
+     obj)
+    ((symbolp obj)
+     (symbol-name obj))
+    ((numberp obj)
+     (number-to-string obj))
+    ((listp obj)
+     (when (cdr (last obj))
+       ;; todo isn't there a more succinct expression for this?
+       (setf (nthcdr (safe-length obj) obj) (list (nthcdr (safe-length obj) obj))))
+     (mapconcat #'(lambda (x)
+                    (string-utils-stringify-anything x separator)) obj separator))
+    ((vectorp obj)
+     (mapconcat #'(lambda (x)
+                    (string-utils-stringify-anything x separator)) obj separator))
+    (t
+     (format "%s" obj))))
 
 ;;;###autoload
 (defun string-utils-has-darkspace-p (obj &optional ascii-only)
@@ -179,7 +194,7 @@ on success.
 
 If optional ASCII-ONLY is set, use an ASCII-only definition
 of whitespace characters."
-  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj)))
+  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
         (string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
     (string-match-p (concat "[^" string-utils-whitespace "]") str-val)))
 
@@ -192,7 +207,7 @@ success.
 
 If optional ASCII-ONLY is set, use an ASCII-only definition
 of whitespace characters."
-  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj)))
+  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
         (string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
     (string-match-p (concat "[" string-utils-whitespace "]") str-val)))
 
