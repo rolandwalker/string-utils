@@ -7,11 +7,15 @@
   (expect "123"
     (string-utils-stringify-anything 123))
 
+  (expect "1.2"
+    (string-utils-stringify-anything 1.2))
+
   (expect ""
     (string-utils-stringify-anything nil))
 
   (expect "symbol"
     (string-utils-stringify-anything 'symbol)))
+
 
 (expectations
 
@@ -32,7 +36,11 @@
 
   (expect 1
     ;; Narrow No-Break Space
-    (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'ascii-only)))
+    (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'ascii-only))
+
+  (expect nil
+    (string-utils-has-darkspace-p nil)))
+
 
 (expectations
 
@@ -56,7 +64,11 @@
 
   (expect nil
     ;; Narrow No-Break Space
-    (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'ascii-only)))
+    (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'ascii-only))
+
+  (expect nil
+    (string-utils-has-whitespace-p nil)))
+
 
 (expectations
 
