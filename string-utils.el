@@ -223,7 +223,7 @@ an ordinary string."
                                             (overlay-buffer obj)) separator ints-are-chars))
     ;; process
     ((processp obj)
-     (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
+     (string-utils-stringify-anything (process-name obj) separator ints-are-chars))
 
     ;; font
     ((fontp obj)

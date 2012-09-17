@@ -107,7 +107,7 @@
        (define-key tester  (kbd "c")  tester2)
        (string-utils-stringify-anything tester nil 'ints-are-chars)))
 
-  (expect "sleep 10"
+  (expect "sleeper"
     (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10")))
 
   (expect "a b 3"
