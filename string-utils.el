@@ -210,6 +210,12 @@ an ordinary string."
     ((processp obj)
      (string-utils-stringify-anything (process-command obj) separator))
 
+    ;; font
+    ((fontp obj)
+     (string-utils-stringify-anything (or (font-get obj :name)
+                                          (font-get obj :family)
+                                          "") separator))
+
     ;; hash-table
     ((hash-table-p obj)
      (let ((output nil))
