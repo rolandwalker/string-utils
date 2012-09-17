@@ -159,13 +159,16 @@ Includes Unicode whitespace characters.")
 ;;; utility functions
 
 ;;;###autoload
-(defun string-utils-stringify-anything (obj &optional separator)
+(defun string-utils-stringify-anything (obj &optional separator ints-are-chars)
   "Coerce any object OBJ into a string.
 
 Contrary to usual conventions, return the empty string for nil.
 
 Sequences are flattened down to atoms and joined with string
 SEPARATOR, which defaults to a single space.
+
+When INTS-ARE-CHARS is non-nil, interpret positive integers in
+OBJ as characters.
 
 This is not a pretty-printer for OBJ, but a way to look at
 the *contents* of OBJ (so much as is possible) as if it was
@@ -185,6 +188,12 @@ an ordinary string."
     ((symbolp obj)
      (symbol-name obj))
 
+    ;; character
+    ((and
+      ints-are-chars
+      (characterp obj))
+     (string obj))
+
     ;; number
     ((numberp obj)
      (number-to-string obj))
@@ -200,15 +209,15 @@ an ordinary string."
     ;; marker
     ((markerp obj)
      (string-utils-stringify-anything (list (marker-position obj)
-                                            (marker-buffer obj)) separator))
+                                            (marker-buffer obj)) separator ints-are-chars))
     ;; overlay
     ((overlayp obj)
      (string-utils-stringify-anything (list (overlay-start obj)
                                             (overlay-end obj)
-                                            (overlay-buffer obj)) separator))
+                                            (overlay-buffer obj)) separator ints-are-chars))
     ;; process
     ((processp obj)
-     (string-utils-stringify-anything (process-command obj) separator))
+     (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
 
     ;; font
     ((fontp obj)
@@ -220,20 +229,20 @@ an ordinary string."
     ((hash-table-p obj)
      (let ((output nil))
        (maphash #'(lambda (k v)
-                    (push (string-utils-stringify-anything k separator) output)
-                    (push (string-utils-stringify-anything v separator) output)) obj)
+                    (push (string-utils-stringify-anything k separator ints-are-chars) output)
+                    (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
        (mapconcat 'identity (nreverse output) separator)))
 
     ;; compiled byte-code
     ((byte-code-function-p obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator)) (append obj nil) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
 
     ;; keymap, function
     ((or (keymapp obj)
          (functionp obj)
          (frame-configuration-p obj))
-     (string-utils-stringify-anything (cdr obj) separator))
+     (string-utils-stringify-anything (cdr obj) separator ints-are-chars))
 
     ;; list
     ((listp obj)
@@ -242,9 +251,9 @@ an ordinary string."
        ;; todo isn't there a more succinct expression for this?
        (setf (nthcdr (safe-length obj) obj) (list (nthcdr (safe-length obj) obj))))
      (let ((output nil))
-       (push (string-utils-stringify-anything (car obj) separator) output)
+       (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
        (when (cdr obj)
-         (push (string-utils-stringify-anything (cdr obj) separator) output))
+         (push (string-utils-stringify-anything (cdr obj) separator ints-are-chars) output))
        (mapconcat 'identity (nreverse output) separator)))
 
     ;; defstruct
@@ -252,17 +261,17 @@ an ordinary string."
           (symbolp (aref obj 0))
           (string-match-p "\\`cl-" (symbol-name (aref obj 0))))
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator)) (cdr (append obj nil)) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars)) (cdr (append obj nil)) separator))
 
     ;; bool-vector
     ((bool-vector-p obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator)) (append obj nil) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
 
     ;; ordinary vector
     ((vectorp obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator)) obj separator))
+                    (string-utils-stringify-anything x separator ints-are-chars)) obj separator))
 
     ;; fallback
     (t

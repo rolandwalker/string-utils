@@ -92,6 +92,14 @@
        (define-key tester  (kbd "c")  tester2)
        (string-utils-stringify-anything tester)))
 
+  (expect "c b ignore a ignore"
+    (let ((tester  (make-sparse-keymap))
+          (tester2 (make-sparse-keymap)))
+       (define-key tester  (kbd "a") 'ignore)
+       (define-key tester2 (kbd "b") 'ignore)
+       (define-key tester  (kbd "c")  tester2)
+       (string-utils-stringify-anything tester nil 'ints-are-chars)))
+
   (expect "sleep 10"
      (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10"))))
 
