@@ -106,7 +106,11 @@
   (expect "a b 3"
      (let ((tester (make-char-table 'testing)))
         (set-char-table-range tester '(?a . ?b) 3)
-        (string-utils-stringify-anything tester))))
+        (string-utils-stringify-anything tester)))
+
+  (expect "Monaco"
+     (string-utils-stringify-anything (font-spec :family "Monaco"))))
+
 
 (expectations
 
