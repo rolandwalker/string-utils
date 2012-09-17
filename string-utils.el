@@ -233,6 +233,14 @@ an ordinary string."
                     (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
        (mapconcat 'identity (nreverse output) separator)))
 
+    ;; char-table
+    ((char-table-p obj)
+     (let ((output nil))
+       (map-char-table #'(lambda (k v)
+                           (push (string-utils-stringify-anything k separator t) output)
+                           (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
+       (mapconcat 'identity (nreverse output) separator)))
+
     ;; compiled byte-code
     ((byte-code-function-p obj)
      (mapconcat #'(lambda (x)

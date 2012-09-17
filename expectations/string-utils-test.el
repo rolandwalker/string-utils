@@ -101,8 +101,12 @@
        (string-utils-stringify-anything tester nil 'ints-are-chars)))
 
   (expect "sleep 10"
-     (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10"))))
+     (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10")))
 
+  (expect "a b 3"
+     (let ((tester (make-char-table 'testing)))
+        (set-char-table-range tester '(?a . ?b) 3)
+        (string-utils-stringify-anything tester))))
 
 (expectations
 
