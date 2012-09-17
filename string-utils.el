@@ -616,8 +616,9 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 ;; byte-compile-warnings: (not cl-functions)
 ;; End:
 ;;
-;; LocalWords:  StringUtils ARGS alist utils darkspace quotemeta
-;; LocalWords:  propertize fillin callf MULTI MAXLEN
+;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
+;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat
+;; LocalWords: defstruct
 ;;
 
 ;;; string-utils.el ends here
