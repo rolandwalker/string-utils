@@ -49,6 +49,12 @@
 ;;
 ;; Bugs
 ;;
+;;    Some objects just as window-configuration are completely
+;;    opaque and don't get stringified usefully.
+;;
+;;    Stringification does recognize font vectors as returned
+;;    by font-info.
+;;
 ;; TODO
 ;;
 ;;    In string-utils-propertize-fillin, strip properties which are
@@ -250,7 +256,7 @@ an ordinary string."
      (mapconcat #'(lambda (x)
                     (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
 
-    ;; keymap, function
+    ;; keymap, function, frame-configuration
     ((or (keymapp obj)
          (functionp obj)
          (frame-configuration-p obj))
@@ -645,7 +651,7 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 ;;
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
 ;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat
-;; LocalWords: defstruct
+;; LocalWords: defstruct stringified Stringification
 ;;
 
 ;;; string-utils.el ends here
