@@ -241,6 +241,10 @@ an ordinary string."
                            (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
        (mapconcat 'identity (nreverse output) separator)))
 
+    ;; subr
+    ((subrp obj)
+     (subr-name obj))
+
     ;; compiled byte-code
     ((byte-code-function-p obj)
      (mapconcat #'(lambda (x)

@@ -109,7 +109,10 @@
         (string-utils-stringify-anything tester)))
 
   (expect "Monaco"
-     (string-utils-stringify-anything (font-spec :family "Monaco"))))
+     (string-utils-stringify-anything (font-spec :family "Monaco")))
+
+  (expect "message"
+    (string-utils-stringify-anything (symbol-function 'message))))
 
 
 (expectations
