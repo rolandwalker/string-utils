@@ -14,61 +14,81 @@
 ;;
 ;;; Commentary:
 ;;
+;; Quickstart
+;;
+;;     (require 'string-utils)
+;;
+;;     (string-utils-squeeze-filename (buffer-file-name (current-buffer)) 20)
+;;
+;;     (string-utils-stringify-anything (selected-frame))
+;;
+;;     (progn
+;;       (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'right))
+;;       (sit-for 1)
+;;       (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'center))
+;;       (sit-for 1)
+;;       (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'left))
+;;       (sit-for 1))
+;;
+;; Explanation
+;;
 ;; String-utils is a collection of functions for string manipulation.
 ;; This library has no user-level interface; it is only useful
 ;; for programming in Emacs Lisp.
 ;;
 ;; The following functions are provided:
 ;;
-;;    `string-utils-stringify-anything'
-;;    `string-utils-has-darkspace-p'
-;;    `string-utils-has-whitespace-p'
-;;    `string-utils-trim-whitespace'
-;;    `string-utils-compress-whitespace'
-;;    `string-utils-string-repeat'
-;;    `string-utils-escape-double-quotes'
-;;    `string-utils-quotemeta'
-;;    `string-utils-pad'
-;;    `string-utils-pad-list'
-;;    `string-utils-propertize-fillin'
-;;    `string-utils-plural-ending'
-;;    `string-utils-squeeze-filename'
+;;     `string-utils-stringify-anything'
+;;     `string-utils-has-darkspace-p'
+;;     `string-utils-has-whitespace-p'
+;;     `string-utils-trim-whitespace'
+;;     `string-utils-compress-whitespace'
+;;     `string-utils-string-repeat'
+;;     `string-utils-escape-double-quotes'
+;;     `string-utils-quotemeta'
+;;     `string-utils-pad'
+;;     `string-utils-pad-list'
+;;     `string-utils-propertize-fillin'
+;;     `string-utils-plural-ending'
+;;     `string-utils-squeeze-filename'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
 ;;
-;;    (require 'string-utils)
+;;     (require 'string-utils)
 ;;
 ;; Notes
 ;;
 ;; Compatibility and Requirements
 ;;
-;;    Tested on GNU Emacs versions 23.3 and 24.1
+;;     Tested on GNU Emacs versions 23.3 and 24.1
 ;;
-;;    No external dependencies
+;;     No external dependencies
 ;;
 ;; Bugs
 ;;
-;;    Some objects just as window-configuration are completely
-;;    opaque and don't get stringified usefully.
+;;     Some objects just as window-configuration are completely
+;;     opaque and don't get stringified usefully.
 ;;
-;;    Stringification does recognize font vectors as returned
-;;    by font-info.
+;;     Stringification does recognize font vectors as returned
+;;     by font-info.
 ;;
 ;; TODO
 ;;
-;;    In string-utils-propertize-fillin, strip properties which are
-;;    set to nil at start, which will create more contiguity in the
-;;    result.  See this example, where the first two characters have
-;;    the same properties
+;;     stringification for network and serial processes
 ;;
-;;       (let ((text "text"))
-;;         (add-text-properties 0 1 '(face nil) text)
-;;         (add-text-properties 2 3 '(face error) text)
-;;         (string-utils-propertize-fillin text 'face 'highlight)
-;;         text)
+;;     In string-utils-propertize-fillin, strip properties which are
+;;     set to nil at start, which will create more contiguity in the
+;;     result.  See this example, where the first two characters have
+;;     the same properties
 ;;
-;;     Adapt squeeze-filename for URLs
+;;         (let ((text "text"))
+;;           (add-text-properties 0 1 '(face nil) text)
+;;           (add-text-properties 2 3 '(face error) text)
+;;           (string-utils-propertize-fillin text 'face 'highlight)
+;;           text)
+;;
+;;      Adapt squeeze-filename for URLs
 ;;
 ;;; License
 ;;
