@@ -528,7 +528,7 @@ Intended to be used in a format string as follows:
       "" "s"))
 
 ;;;###autoload
-(defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis)
+(defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis no-tail)
   "Intelligibly squeeze file or buffer name NAME to fit within MAXLEN.
 
 When shortening file or buffer names for presentation to human
@@ -562,7 +562,10 @@ substituting no ellipsis.
 
 ELLIPSIS is a string inserted wherever characters were removed.
 It defaults to the UCS character \"Horizontal Ellipsis\", or
-\"...\" if extended characters are not displayable."
+\"...\" if extended characters are not displayable.
+
+If NO-TAIL is set, do not preserve the trailing letters of
+a filename unless there is a dotted extension."
   ;; character x2026 = Horizontal Ellipsis
   (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (cond
@@ -624,6 +627,7 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
                (setq extension (match-string 1 name))
                (replace-match "" t t name 0))
              (when (and (equal extension "")
+                        (not no-tail)
                         (string-match ".\\(.\\{4\\}\\)\\'" name))
                (setq extension (match-string 1 name))
                (replace-match "" t t name 1))

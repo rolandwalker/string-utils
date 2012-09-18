@@ -599,7 +599,13 @@
     (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "..."))
 
   (expect ""
-    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "...")))
+    (string-utils-squeeze-filename "/Volumes/projects/repos/lisp/string-utils/string-utils.el" 0 t "..."))
+
+  (expect "test_long_file_n…sion"
+    (string-utils-squeeze-filename "test_long_file_name_no_extension" 21 nil "…"))
+
+  (expect "test_long_file_name_…"
+    (string-utils-squeeze-filename "test_long_file_name_no_extension" 21 nil "…" 'no-tail)))
 
 ;;
 ;; Emacs
