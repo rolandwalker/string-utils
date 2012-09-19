@@ -118,6 +118,9 @@
   (expect "Monaco"
     (string-utils-stringify-anything (font-spec :family "Monaco")))
 
+  (expect "Monaco"
+    (string-utils-stringify-anything '["-apple-Monaco-medium-normal-normal-*-12-*-*-*-m-0-iso10646-1" "Monaco" 12 15 0 0 0]))
+
   (expect "message"
     (string-utils-stringify-anything (symbol-function 'message))))
 

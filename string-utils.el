@@ -245,11 +245,25 @@ an ordinary string."
     ((processp obj)
      (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
 
-    ;; font
+    ;; font object
     ((fontp obj)
      (string-utils-stringify-anything (or (font-get obj :name)
                                           (font-get obj :family)
                                           "") separator))
+
+    ;; font vector as returned by `font-info'
+    ((and (vectorp obj)
+          (= 7 (length obj))
+          (stringp (aref obj 0))
+          (stringp (aref obj 1))
+          (numberp (aref obj 2))
+          (numberp (aref obj 3))
+          (numberp (aref obj 4))
+          (numberp (aref obj 5))
+          (numberp (aref obj 6))
+          (> (length (aref obj 1)) 0)
+          (string-match-p "\\`\\(?:-[^-]+\\)\\{14,20\\}\\'" (aref obj 0)))
+     (aref obj 1))
 
     ;; hash-table
     ((hash-table-p obj)
