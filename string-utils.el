@@ -67,15 +67,12 @@
 ;;
 ;; Bugs
 ;;
-;;     Some objects just as window-configuration are completely
-;;     opaque and don't get stringified usefully.
-;;
-;;     Stringification does recognize font vectors as returned
-;;     by font-info.
+;;     Some objects such as window-configuration are completely
+;;     opaque and won't be stringified usefully.
 ;;
 ;; TODO
 ;;
-;;     stringification for network and serial processes
+;;     Useful stringification for network and serial processes
 ;;
 ;;     In string-utils-propertize-fillin, strip properties which are
 ;;     set to nil at start, which will create more contiguity in the
@@ -580,7 +577,7 @@ Intended to be used in a format string as follows:
 
 ;;;###autoload
 (defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis no-tail)
-  "Intelligibly squeeze file or buffer name NAME to fit within MAXLEN.
+  "Intelligibly squeeze file-name or buffer-name NAME to fit within MAXLEN.
 
 When shortening file or buffer names for presentation to human
 readers, it is often preferable not to truncate the ends, but to
@@ -725,8 +722,8 @@ a filename unless there is a dotted extension."
 ;; End:
 ;;
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
-;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat
-;; LocalWords: defstruct stringified Stringification
+;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat progn
+;; LocalWords: defstruct stringified Stringification INTS ascii subr
 ;;
 
 ;;; string-utils.el ends here
