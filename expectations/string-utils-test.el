@@ -132,11 +132,32 @@
   (expect 0
     (string-utils-has-darkspace-p "text"))
 
+  (expect 0
+    (string-utils-has-darkspace-p "text" 'ascii))
+
+  (expect 0
+    (emacs-lisp-mode)
+    (string-utils-has-darkspace-p "text" 'syntax))
+
   (expect nil
     (string-utils-has-darkspace-p ""))
 
   (expect nil
+    (string-utils-has-darkspace-p "" 'ascii))
+
+  (expect nil
+    (emacs-lisp-mode)
+    (string-utils-has-darkspace-p "" 'syntax))
+
+  (expect nil
     (string-utils-has-darkspace-p " "))
+
+  (expect nil
+    (string-utils-has-darkspace-p " " 'ascii))
+
+  (expect nil
+    (emacs-lisp-mode)
+    (string-utils-has-darkspace-p " " 'syntax))
 
   (expect nil
     ;; Narrow No-Break Space
@@ -144,7 +165,12 @@
 
   (expect 1
     ;; Narrow No-Break Space
-    (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'ascii-only))
+    (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'ascii))
+
+  (expect 1
+    (emacs-lisp-mode)
+    ;; Narrow No-Break Space
+    (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'syntax))
 
   (expect nil
     (string-utils-has-darkspace-p nil))
@@ -164,13 +190,41 @@
     (string-utils-has-whitespace-p "text"))
 
   (expect nil
+    (string-utils-has-whitespace-p "text" 'ascii))
+
+  (expect nil
+    (emacs-lisp-mode)
+    (string-utils-has-whitespace-p "text" 'syntax))
+
+  (expect nil
     (string-utils-has-whitespace-p ""))
+
+  (expect nil
+    (string-utils-has-whitespace-p "" 'ascii))
+
+  (expect nil
+    (emacs-lisp-mode)
+    (string-utils-has-whitespace-p "" 'syntax))
 
   (expect 0
     (string-utils-has-whitespace-p " "))
 
+  (expect 0
+    (string-utils-has-whitespace-p " " 'ascii))
+
+  (expect 0
+    (emacs-lisp-mode)
+    (string-utils-has-whitespace-p " " 'syntax))
+
   (expect 4
     (string-utils-has-whitespace-p "text "))
+
+  (expect 4
+    (string-utils-has-whitespace-p "text " 'ascii))
+
+  (expect 4
+    (emacs-lisp-mode)
+    (string-utils-has-whitespace-p "text " 'syntax))
 
   (expect 4
     ;; Narrow No-Break Space
@@ -178,7 +232,12 @@
 
   (expect nil
     ;; Narrow No-Break Space
-    (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'ascii-only))
+    (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'ascii))
+
+  (expect nil
+    (emacs-lisp-mode)
+    ;; Narrow No-Break Space
+    (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'syntax))
 
   (expect nil
     (string-utils-has-whitespace-p nil))
@@ -197,6 +256,13 @@
   (expect "text"
     (string-utils-trim-whitespace " text "))
 
+  (expect "text"
+    (string-utils-trim-whitespace " text " 'ascii))
+
+  (expect "text"
+    (emacs-lisp-mode)
+    (string-utils-trim-whitespace " text " 'syntax))
+
   (expect "text \n words"
     (string-utils-trim-whitespace "\n text \n words\t\r"))
 
@@ -206,16 +272,29 @@
 
   (expect (concat "text \n words\t\r" (string (decode-char 'ucs #x0202f)))
     ;; Narrow No-Break Space
-    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii-only))
+    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii))
+
+  (expect (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f)))
+    (emacs-lisp-mode)
+    ;; Narrow No-Break Space
+    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax))
 
   (expect "text\nwords"
     ;; Narrow No-Break Space
     (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) nil 'multi-line))
 
+  (expect "\ntext\nwords\t\r"
+    (emacs-lisp-mode)
+    (string-utils-trim-whitespace "\n text \n words\t\r" 'syntax 'multi-line))
+
+  (expect (concat "\ntext\nwords\t\r" (string (decode-char 'ucs #x0202f)))
+    (emacs-lisp-mode)
+    ;; Narrow No-Break Space
+    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax 'multi-line))
+
   (expect (concat "text\nwords\t\r" (string (decode-char 'ucs #x0202f)))
     ;; Narrow No-Break Space
-    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii-only 'multi-line)))
-
+    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii 'multi-line)))
 
 (expectations
 
@@ -233,7 +312,16 @@
 
   (expect (concat " text words " (string (decode-char 'ucs #x0202f)))
     ;; Narrow No-Break Space
-    (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii-only)))
+    (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii))
+
+  (expect "\n text \n words \r"
+    (emacs-lisp-mode)
+    (string-utils-compress-whitespace "\n text \n words\t\r" 'syntax))
+
+  (expect (concat "\n text \n words \r" (string (decode-char 'ucs #x0202f)))
+    (emacs-lisp-mode)
+    ;; Narrow No-Break Space
+    (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax)))
 
 
 (expectations

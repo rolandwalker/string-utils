@@ -130,7 +130,7 @@
 
 ;;; requires
 
-;; for callf, callf2
+;; for callf, callf2, assert
 (require 'cl)
 
 (autoload 'font-lock-fillin-text-property "font-lock"
@@ -181,6 +181,7 @@
 Includes Unicode whitespace characters.")
 
 (defvar string-utils-whitespace-ascii " \n\t\r\f" "ASCII-only whitespace characters used by string-utils.")
+(defvar string-utils-whitespace-syntax "\\s-"     "Whitespace regular expression according to `syntax-table'.")
 
 ;;; utility functions
 
@@ -330,57 +331,93 @@ an ordinary string."
      (format "%s" obj))))
 
 ;;;###autoload
-(defun string-utils-has-darkspace-p (obj &optional ascii-only)
+(defun string-utils-has-darkspace-p (obj &optional whitespace-type)
   "Test whether OBJ, when coerced to a string, has any non-whitespace characters.
 
 Returns the position of the first non-whitespace character
 on success.
 
-If optional ASCII-ONLY is set, use an ASCII-only definition
-of whitespace characters."
-  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
-        (string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
-    (string-match-p (concat "[^" string-utils-whitespace "]") str-val)))
+If optional WHITESPACE-TYPE is 'ascii or t, use an ASCII-only
+definition of whitespace characters.  If WHITESPACE-TYPE is
+'syntax, is the definition of whitespace from the current
+`syntax-table'.  Otherwise, use a broad, Unicode-aware
+definition of whitespace from `string-utils-whitespace'."
+  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (let* ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
+         (string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
+                                      string-utils-whitespace-ascii
+                                    string-utils-whitespace))
+         (darkspace-regexp (if (eq whitespace-type 'syntax)
+                               (upcase string-utils-whitespace-syntax)
+                             (concat "[^" string-utils-whitespace "]"))))
+    (string-match-p darkspace-regexp str-val)))
 
 ;;;###autoload
-(defun string-utils-has-whitespace-p (obj &optional ascii-only)
+(defun string-utils-has-whitespace-p (obj &optional whitespace-type)
   "Test whether OBJ, when coerced to a string, has any whitespace characters.
 
 Returns the position of the first whitespace character on
 success.
 
-If optional ASCII-ONLY is set, use an ASCII-only definition
-of whitespace characters."
-  (let ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
-        (string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
-    (string-match-p (concat "[" string-utils-whitespace "]") str-val)))
+If optional WHITESPACE-TYPE is 'ascii or t, use an ASCII-only
+definition of whitespace characters.  If WHITESPACE-TYPE is
+'syntax, is the definition of whitespace from the current
+`syntax-table'.  Otherwise, use a broad, Unicode-aware
+definition of whitespace from `string-utils-whitespace'."
+  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (let* ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
+         (string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
+                                      string-utils-whitespace-ascii
+                                    string-utils-whitespace))
+         (whitespace-regexp (if (eq whitespace-type 'syntax)
+                                string-utils-whitespace-syntax
+                              (concat "[" string-utils-whitespace "]"))))
+    (string-match-p whitespace-regexp str-val)))
 
 ;;;###autoload
-(defun string-utils-trim-whitespace (str-val &optional ascii-only multi-line)
+(defun string-utils-trim-whitespace (str-val &optional whitespace-type multi-line)
   "Return STR-VAL with leading and trailing whitespace removed.
 
-If optional ASCII-ONLY is set, use an ASCII-only definition
-of whitespace characters.
+If optional WHITESPACE-TYPE is 'ascii or t, use an ASCII-only
+definition of whitespace characters.  If WHITESPACE-TYPE is
+'syntax, is the definition of whitespace from the current
+`syntax-table'.  Otherwise, use a broad, Unicode-aware
+definition of whitespace from `string-utils-whitespace'.
 
 If optional MULTI-LINE is set, trim spaces at starts and
 ends of all lines throughout STR-VAL."
-  (let ((string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace))
-        (start-pat (if multi-line "^" "\\`"))
-        (end-pat   (if multi-line "$" "\\'")))
+  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (let* ((string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
+                                      string-utils-whitespace-ascii
+                                    string-utils-whitespace))
+         (whitespace-regexp (if (eq whitespace-type 'syntax)
+                                string-utils-whitespace-syntax
+                              (concat "[" string-utils-whitespace "]")))
+         (start-pat (if multi-line "^" "\\`"))
+         (end-pat   (if multi-line "$" "\\'")))
     (save-match-data
-      (replace-regexp-in-string (concat start-pat "[" string-utils-whitespace "]+") ""
-         (replace-regexp-in-string (concat "[" string-utils-whitespace "]+" end-pat) ""
+      (replace-regexp-in-string (concat start-pat whitespace-regexp "+") ""
+         (replace-regexp-in-string (concat whitespace-regexp "+" end-pat) ""
             str-val)))))
 
 ;;;###autoload
-(defun string-utils-compress-whitespace (str-val &optional ascii-only)
+(defun string-utils-compress-whitespace (str-val &optional whitespace-type)
   "Return STR-VAL with all contiguous whitespace compressed to one space.
 
-If optional ASCII-ONLY is set, use an ASCII-only definition
-of whitespace characters."
-  (let ((string-utils-whitespace (if ascii-only string-utils-whitespace-ascii string-utils-whitespace)))
+If optional WHITESPACE-TYPE is 'ascii or t, use an ASCII-only
+definition of whitespace characters.  If WHITESPACE-TYPE is
+'syntax, is the definition of whitespace from the current
+`syntax-table'.  Otherwise, use a broad, Unicode-aware
+definition of whitespace from `string-utils-whitespace'."
+  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (let* ((string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
+                                      string-utils-whitespace-ascii
+                                    string-utils-whitespace))
+         (whitespace-regexp (if (eq whitespace-type 'syntax)
+                                string-utils-whitespace-syntax
+                              (concat "[" string-utils-whitespace "]"))))
     (save-match-data
-      (replace-regexp-in-string (concat "[" string-utils-whitespace "]+") " "
+      (replace-regexp-in-string (concat whitespace-regexp "+") " "
          str-val))))
 
 ;;;###autoload
