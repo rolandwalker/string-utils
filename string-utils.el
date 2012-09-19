@@ -133,6 +133,8 @@
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
 
+(declare-function object-name-string "eieio.el")
+
 ;; variables
 
 (defvar string-utils-whitespace (concat
@@ -242,6 +244,11 @@ an ordinary string."
     ;; process
     ((processp obj)
      (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
+
+    ;; EIEIO object
+    ((and (fboundp 'object-p)
+          (object-p obj))
+     (object-name-string obj))
 
     ;; font object
     ((fontp obj)

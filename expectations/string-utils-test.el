@@ -1,4 +1,5 @@
 (require 'string-utils)
+(require 'eieio)
 
 ;; missing tests for stringification on types:
 ;;
@@ -122,7 +123,12 @@
     (string-utils-stringify-anything '["-apple-Monaco-medium-normal-normal-*-12-*-*-*-m-0-iso10646-1" "Monaco" 12 15 0 0 0]))
 
   (expect "message"
-    (string-utils-stringify-anything (symbol-function 'message))))
+    (string-utils-stringify-anything (symbol-function 'message)))
+
+  (expect "my_id"
+     (defclass tester nil
+        ((uid)))
+     (string-utils-stringify-anything (tester "my_id"))))
 
 
 (expectations
