@@ -130,6 +130,8 @@
 ;; for callf, callf2, assert
 (require 'cl)
 
+(require 'eieio nil t)
+
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
 
