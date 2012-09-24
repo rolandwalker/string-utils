@@ -2,13 +2,6 @@
 (require 'string-utils)
 (require 'eieio)
 
-;; todo missing tests for stringification on types:
-;;
-;;     frame
-;;     frame-configuration
-;;     window
-;;
-
 ;;; string-utils-stringify-anything
 
 (ert-deftest string-utils-stringify-anything-01 nil
@@ -159,6 +152,42 @@
                    (defclass tester nil
                      ((uid)))
                    (string-utils-stringify-anything (tester "my_id"))))))
+
+(ert-deftest string-utils-stringify-anything-31 nil
+  "Stringify window title"
+  (cond
+    (noninteractive
+     (should (equal "*scratch*"
+                    (string-utils-stringify-anything (selected-window)))))
+    (t
+     (should (equal "*ert*"
+                    (string-utils-stringify-anything (selected-window)))))))
+
+(ert-deftest string-utils-stringify-anything-32 nil
+  "Stringify frame title"
+  (cond
+    (noninteractive
+     (should (equal "F1"
+                    (string-utils-stringify-anything (selected-frame)))))
+    (t
+     (should (equal "frame_title"
+                    (let ((frame-title-format "frame_title"))
+                      (force-mode-line-update)
+                      (redisplay)
+                      (string-utils-stringify-anything (selected-frame))))))))
+
+(ert-deftest string-utils-stringify-anything-33 nil
+  "Stringify frame configuration"
+  (cond
+    (noninteractive
+     (should (string-match-p "\\`F1 .*foreground-color"
+                    (string-utils-stringify-anything (current-frame-configuration)))))
+    (t
+     (should (string-match-p "\\`frame_title .*foreground-color"
+                    (let ((frame-title-format "frame_title"))
+                      (force-mode-line-update)
+                      (redisplay)
+                      (string-utils-stringify-anything (current-frame-configuration))))))))
 
 
 ;;; string-utils-has-darkspace-p
