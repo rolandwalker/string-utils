@@ -574,7 +574,7 @@
               (let* ((start "abc")
                      (end   "def")
                      (start-with-prop (propertize start :face 'bold))
-                     (end-with-prop   (propertize start :face 'italic))
+                     (end-with-prop   (propertize end   :face 'italic))
                      (half-prop (concat start end-with-prop)))
                 (setq half-prop (string-utils-propertize-fillin half-prop :face 'bold))
                 (get-text-property 0 :face half-prop)))))
@@ -584,10 +584,20 @@
               (let* ((start "abc")
                      (end   "def")
                      (start-with-prop (propertize start :face 'bold))
-                     (end-with-prop   (propertize start :face 'italic))
+                     (end-with-prop   (propertize end   :face 'italic))
                      (half-prop (concat start end-with-prop)))
                 (setq half-prop (string-utils-propertize-fillin half-prop :face 'bold))
                 (get-text-property 5 :face half-prop)))))
+
+(ert-deftest string-utils-propertize-fillin-03 nil
+  (should (equal-including-properties
+           #("abcdef" 0 3 (:face bold) 3 6 (:face italic))
+           (let* ((start "abc")
+                  (end   "def")
+                  (start-with-prop (propertize start :face 'bold))
+                  (end-with-prop   (propertize end   :face 'italic))
+                  (half-prop (concat start end-with-prop)))
+             (string-utils-propertize-fillin half-prop :face 'bold)))))
 
 
 ;;; string-utils-squeeze-filename
