@@ -727,7 +727,7 @@ a filename unless there is a dotted extension."
 ;; mangle-whitespace: t
 ;; require-final-newline: t
 ;; coding: utf-8
-;; byte-compile-warnings: (not cl-functions)
+;; byte-compile-warnings: (not cl-functions redefine)
 ;; End:
 ;;
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
