@@ -307,8 +307,7 @@ an ordinary string."
     ((listp obj)
      ;; convert cons cells into lists before mapconcat chokes
      (when (cdr (last obj))
-       ;; todo isn't there a more succinct expression for this?
-       (setf (nthcdr (safe-length obj) obj) (list (nthcdr (safe-length obj) obj))))
+       (callf list (nthcdr (safe-length obj) obj)))
      (let ((output nil))
        (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
        (when (cdr obj)
