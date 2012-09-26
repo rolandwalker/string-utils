@@ -15,6 +15,8 @@ AUTOLOADS_FILE=$(shell basename `pwd`)-loaddefs.el
 TEST_DIR=ert-tests
 TEST_DEP_1=ert
 TEST_DEP_1_URL=http://bzr.savannah.gnu.org/lh/emacs/emacs-24/download/head:/ert.el-20110112160650-056hnl9qhpjvjicy-2/ert.el
+TEST_DEP_2=list-utils
+TEST_DEP_2_URL=https://raw.github.com/rolandwalker/list-utils/557077141dccbedb460f3786d0f0900293214851/list-utils.el
 
 build :
 	$(EMACS) $(EMACS_FLAGS) --eval             \
@@ -27,8 +29,19 @@ test-dep-1 :
 	$(EMACS) $(EMACS_FLAGS)  -L . -L .. -l $(TEST_DEP_1) || \
 	(echo "Can't load test dependency $(TEST_DEP_1).el, run 'make downloads' to fetch it" ; exit 1)
 
+test-dep-2 :
+	@cd $(TEST_DIR)                                   && \
+	$(EMACS) $(EMACS_FLAGS)  -L . -L .. --eval           \
+	    "(progn                                          \
+	      (setq package-load-list '(($(TEST_DEP_2) t)))  \
+	      (when (fboundp 'package-initialize)            \
+	       (package-initialize))                         \
+	      (require '$(TEST_DEP_2)))"                  || \
+	(echo "Can't load test dependency $(TEST_DEP_2).el, run 'make downloads' to fetch it" ; exit 1)
+
 downloads :
 	$(CURL) '$(TEST_DEP_1_URL)' > $(TEST_DIR)/$(TEST_DEP_1).el
+	$(CURL) '$(TEST_DEP_2_URL)' > $(TEST_DIR)/$(TEST_DEP_2).el
 
 autoloads :
 	$(EMACS) $(EMACS_FLAGS) --eval                       \
@@ -39,7 +52,7 @@ autoloads :
 test-autoloads : autoloads
 	@$(EMACS) $(EMACS_FLAGS) -l "./$(AUTOLOADS_FILE)" || echo "failed to load autoloads: $(AUTOLOADS_FILE)"
 
-test : build test-dep-1 test-autoloads
+test : build test-dep-1 test-dep-2 test-autoloads
 	@cd $(TEST_DIR)                                   && \
 	(for test_lib in *-test.el; do                       \
 	    $(EMACS) $(EMACS_FLAGS) -L . -L .. -l cl -l $(TEST_DEP_1) -l $$test_lib --eval \
@@ -49,4 +62,4 @@ test : build test-dep-1 test-autoloads
 	done)
 
 clean :
-	@rm -f $(AUTOLOADS_FILE) *.elc *~ */*.elc */*~ $(TEST_DIR)/$(TEST_DEP_1).el
+	@rm -f $(AUTOLOADS_FILE) *.elc *~ */*.elc */*~ $(TEST_DIR)/$(TEST_DEP_1).el $(TEST_DIR)/$(TEST_DEP_2).el

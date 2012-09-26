@@ -1,6 +1,15 @@
 
+;;; requires and setup
+
+(when load-file-name
+  (setq package-enable-at-startup nil)
+  (setq package-load-list '((list-utils t)))
+  (when (fboundp 'package-initialize)
+    (package-initialize)))
+
 (require 'string-utils)
 (require 'eieio)
+(require 'list-utils)
 
 ;;; string-utils-stringify-anything
 
@@ -188,6 +197,13 @@
                       (force-mode-line-update)
                       (redisplay)
                       (string-utils-stringify-anything (current-frame-configuration))))))))
+
+(ert-deftest string-utils-stringify-anything-34 nil
+  "Stringify cyclic list"
+  (should (equal "a b c d e f g h"
+                 (let ((cyclic '(a b c d e f g h)))
+                   (nconc cyclic cyclic)
+                   (string-utils-stringify-anything cyclic)))))
 
 
 ;;; string-utils-has-darkspace-p

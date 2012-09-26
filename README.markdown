@@ -80,4 +80,4 @@ Compatibility and Requirements
 
 Tested on GNU Emacs versions 23.3 and 24.1
 
-No external dependencies
+Uses if present: [list-utils.el](http://github.com/rolandwalker/list-utils)

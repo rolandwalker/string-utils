@@ -7,6 +7,7 @@
 ;; URL: http://raw.github.com/rolandwalker/string-utils/master/string-utils.el
 ;; Version: 0.0.6
 ;; Last-Updated: 17 Sep 2012
+;; Package-Requires: ((list-utils "0.1.2"))
 ;; EmacsWiki: StringUtils
 ;; Keywords: extensions
 ;;
@@ -63,7 +64,7 @@
 ;;
 ;;     Tested on GNU Emacs versions 23.3 and 24.1
 ;;
-;;     No external dependencies
+;;     Uses if present: list-utils.el
 ;;
 ;; Bugs
 ;;
@@ -131,6 +132,7 @@
 (require 'cl)
 
 (require 'eieio nil t)
+(require 'list-utils nil t)
 
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
@@ -193,7 +195,9 @@ Includes Unicode whitespace characters.")
 Contrary to usual conventions, return the empty string for nil.
 
 Sequences are flattened down to atoms and joined with string
-SEPARATOR, which defaults to a single space.
+SEPARATOR, which defaults to a single space.  Cyclic lists
+may give unpredictable results (similar to `format') unless
+list-utils.el is installed.
 
 When INTS-ARE-CHARS is non-nil, interpret positive integers in
 OBJ as characters.
@@ -311,6 +315,10 @@ an ordinary string."
                   (> len 0)
                   (not (listp (nthcdr len obj)))))
        (callf list (nthcdr (safe-length obj) obj)))
+     ;; truncate cyclic lists
+     (let ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length)))
+       (setq obj (subseq obj 0 (funcall measurer obj))))
+     ;; accumulate output
      (let ((output nil))
        (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
        (when (cdr obj)
