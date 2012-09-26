@@ -306,7 +306,10 @@ an ordinary string."
     ;; list
     ((listp obj)
      ;; convert cons cells into lists before mapconcat chokes
-     (when (cdr (last obj))
+     (when (let ((len (safe-length obj)))
+             (and (consp obj)
+                  (> len 0)
+                  (not (listp (nthcdr len obj)))))
        (callf list (nthcdr (safe-length obj) obj)))
      (let ((output nil))
        (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
