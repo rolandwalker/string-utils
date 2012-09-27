@@ -8,19 +8,21 @@ String-manipulation utilities for Emacs Lisp.
 Quickstart
 ----------
 
-	(require 'string-utils)
-
-	(string-utils-squeeze-filename (buffer-file-name (current-buffer)) 20)
-
-	(string-utils-stringify-anything (selected-frame))
-
-	(progn
-	  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'right))
-	  (sit-for 1)
-	  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'center))
-	  (sit-for 1)
-	  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'left))
-	  (sit-for 1))
+```lisp
+(require 'string-utils)
+ 
+(string-utils-squeeze-filename (buffer-file-name (current-buffer)) 20)
+ 
+(string-utils-stringify-anything (selected-frame))
+ 
+(progn
+  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'right))
+  (sit-for 1)
+  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'center))
+  (sit-for 1)
+  (message (string-utils-pad (buffer-name (current-buffer)) (window-width) 'left))
+  (sit-for 1))
+```
 
 string-utils
 ------------
