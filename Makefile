@@ -6,13 +6,15 @@ EMACS=emacs
 # EMACS=/usr/local/bin/emacs
 # EMACS=/opt/local/bin/emacs
 # EMACS=/usr/bin/emacs
-EMACS_FLAGS=-Q --batch
+EMACS_CLEAN=-Q
+EMACS_BATCH=$(EMACS_CLEAN) --batch
 TESTS=
 
 CURL=curl --silent
 EDITOR=runemacs -no_wait
 WORK_DIR=$(shell pwd)
-AUTOLOADS_FILE=$(shell basename `pwd`)-loaddefs.el
+PACKAGE_NAME=$(shell basename $(WORK_DIR))
+AUTOLOADS_FILE=$(PACKAGE_NAME)-loaddefs.el
 TEST_DIR=ert-tests
 TEST_DEP_1=ert
 TEST_DEP_1_URL=http://bzr.savannah.gnu.org/lh/emacs/emacs-24/download/head:/ert.el-20110112160650-056hnl9qhpjvjicy-2/ert.el
@@ -20,19 +22,19 @@ TEST_DEP_2=list-utils
 TEST_DEP_2_URL=https://raw.github.com/rolandwalker/list-utils/557077141dccbedb460f3786d0f0900293214851/list-utils.el
 
 build :
-	$(EMACS) $(EMACS_FLAGS) --eval             \
+	$(EMACS) $(EMACS_BATCH) --eval             \
 	    "(progn                                \
 	      (setq byte-compile-error-on-warn t)  \
 	      (batch-byte-compile))" *.el
 
 test-dep-1 :
 	@cd $(TEST_DIR)                                      && \
-	$(EMACS) $(EMACS_FLAGS)  -L . -L .. -l $(TEST_DEP_1) || \
+	$(EMACS) $(EMACS_BATCH)  -L . -L .. -l $(TEST_DEP_1) || \
 	(echo "Can't load test dependency $(TEST_DEP_1).el, run 'make downloads' to fetch it" ; exit 1)
 
 test-dep-2 :
 	@cd $(TEST_DIR)                                   && \
-	$(EMACS) $(EMACS_FLAGS)  -L . -L .. --eval           \
+	$(EMACS) $(EMACS_BATCH)  -L . -L .. --eval           \
 	    "(progn                                          \
 	      (setq package-load-list '(($(TEST_DEP_2) t)))  \
 	      (when (fboundp 'package-initialize)            \
@@ -45,18 +47,18 @@ downloads :
 	$(CURL) '$(TEST_DEP_2_URL)' > $(TEST_DIR)/$(TEST_DEP_2).el
 
 autoloads :
-	$(EMACS) $(EMACS_FLAGS) --eval                       \
+	$(EMACS) $(EMACS_BATCH) --eval                       \
 	    "(progn                                          \
 	      (setq generated-autoload-file \"$(WORK_DIR)/$(AUTOLOADS_FILE)\") \
 	      (update-directory-autoloads \"$(WORK_DIR)\"))"
 
 test-autoloads : autoloads
-	@$(EMACS) $(EMACS_FLAGS) -l "./$(AUTOLOADS_FILE)" || echo "failed to load autoloads: $(AUTOLOADS_FILE)"
+	@$(EMACS) $(EMACS_BATCH) -l "./$(AUTOLOADS_FILE)" || echo "failed to load autoloads: $(AUTOLOADS_FILE)"
 
 test : build test-dep-1 test-dep-2 test-autoloads
 	@cd $(TEST_DIR)                                   && \
 	(for test_lib in *-test.el; do                       \
-	    $(EMACS) $(EMACS_FLAGS) -L . -L .. -l cl -l $(TEST_DEP_1) -l $$test_lib --eval \
+	    $(EMACS) $(EMACS_BATCH) -L . -L .. -l cl -l $(TEST_DEP_1) -l $$test_lib --eval \
 	    "(flet ((ert--print-backtrace (&rest args)       \
 	      (insert \"no backtrace in batch mode\")))      \
 	       (ert-run-tests-batch-and-exit '(and \"$(TESTS)\" (not (tag :interactive)))))" || exit 1; \
