@@ -31,6 +31,10 @@ TEST_DEP_2=list-utils
 TEST_DEP_2_STABLE_URL=https://raw.github.com/rolandwalker/list-utils/557077141dccbedb460f3786d0f0900293214851/list-utils.el
 TEST_DEP_2_LATEST_URL=https://raw.github.com/rolandwalker/list-utils/master/list-utils.el
 
+.PHONY : build downloads downloads-latest autoloads test-autoloads test-travis \
+         test test-interactive clean edit test-dep-1 test-dep-2 test-dep-3     \
+         test-dep-4 test-dep-5 test-dep-6 test-dep-7 test-dep-8 test-dep-9
+
 build :
 	$(EMACS) $(EMACS_BATCH) --eval             \
 	    "(progn                                \
