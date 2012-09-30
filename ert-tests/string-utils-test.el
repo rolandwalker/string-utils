@@ -82,8 +82,8 @@
                  (string-utils-stringify-anything (make-byte-code '(args) nil nil 0) "."))))
 
 (ert-deftest string-utils-stringify-anything-17 nil
-  (should (equal "1 *scratch*"
-                 (with-current-buffer "*scratch*"
+  (should (string-match-p "\\`1 +\\*temp\\*"
+                 (with-temp-buffer
                    (let ((tester (make-marker)))
                      (move-marker tester 1)
                      (string-utils-stringify-anything tester))))))
@@ -93,14 +93,14 @@
                  (string-utils-stringify-anything (make-marker) ""))))
 
 (ert-deftest string-utils-stringify-anything-19 nil
-  (should (equal "1 1 *scratch*"
-                 (with-current-buffer "*scratch*"
+  (should (string-match-p "\\`1 +1 +\\*temp\\*"
+                 (with-temp-buffer
                    (let ((tester (make-overlay 1 1)))
                      (string-utils-stringify-anything tester))))))
 
 (ert-deftest string-utils-stringify-anything-20 nil
   (should (equal ""
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (let ((tester (make-overlay 1 1)))
                      (delete-overlay tester)
                      (string-utils-stringify-anything tester ""))))))
@@ -218,7 +218,7 @@
 
 (ert-deftest string-utils-has-darkspace-p-03 nil
   (should (= 0
-             (with-current-buffer "*scratch*"
+             (with-temp-buffer
                (emacs-lisp-mode)
                (string-utils-has-darkspace-p "text" 'syntax)))))
 
@@ -232,7 +232,7 @@
 
 (ert-deftest string-utils-has-darkspace-p-06 nil
   (should-not
-   (with-current-buffer "*scratch*"
+   (with-temp-buffer
      (emacs-lisp-mode)
      (string-utils-has-darkspace-p "" 'syntax))))
 
@@ -246,7 +246,7 @@
 
 (ert-deftest string-utils-has-darkspace-p-09 nil
   (should-not
-   (with-current-buffer "*scratch*"
+   (with-temp-buffer
      (emacs-lisp-mode)
      (string-utils-has-darkspace-p " " 'syntax))))
 
@@ -262,7 +262,7 @@
 
 (ert-deftest string-utils-has-darkspace-p-12 nil
   (should (= 1
-             (with-current-buffer "*scratch*"
+             (with-temp-buffer
                (emacs-lisp-mode)
                ;; Narrow No-Break Space
                (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'syntax)))))
@@ -292,7 +292,7 @@
 
 (ert-deftest string-utils-has-whitespace-p-03 nil
   (should-not
-   (with-current-buffer "*scratch*"
+   (with-temp-buffer
      (emacs-lisp-mode)
      (string-utils-has-whitespace-p "text" 'syntax))))
 
@@ -306,7 +306,7 @@
 
 (ert-deftest string-utils-has-whitespace-p-06 nil
   (should-not
-   (with-current-buffer "*scratch*"
+   (with-temp-buffer
      (emacs-lisp-mode)
      (string-utils-has-whitespace-p "" 'syntax))))
 
@@ -320,7 +320,7 @@
 
 (ert-deftest string-utils-has-whitespace-p-09 nil
   (should (= 0
-             (with-current-buffer "*scratch*"
+             (with-temp-buffer
                (emacs-lisp-mode)
                (string-utils-has-whitespace-p " " 'syntax)))))
 
@@ -334,7 +334,7 @@
 
 (ert-deftest string-utils-has-whitespace-p-12 nil
   (should (= 4
-             (with-current-buffer "*scratch*"
+             (with-temp-buffer
                (emacs-lisp-mode)
                (string-utils-has-whitespace-p "text " 'syntax)))))
 
@@ -350,7 +350,7 @@
 
 (ert-deftest string-utils-has-whitespace-p-15 nil
   (should-not
-   (with-current-buffer "*scratch*"
+   (with-temp-buffer
      (emacs-lisp-mode)
      ;; Narrow No-Break Space
      (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'syntax))))
@@ -380,7 +380,7 @@
 
 (ert-deftest string-utils-trim-whitespace-03 nil
   (should (equal "text"
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    (string-utils-trim-whitespace " text " 'syntax)))))
 
@@ -400,7 +400,7 @@
 
 (ert-deftest string-utils-trim-whitespace-07 nil
   (should (equal (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f)))
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    ;; Narrow No-Break Space
                    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax)))))
@@ -412,13 +412,13 @@
 
 (ert-deftest string-utils-trim-whitespace-09 nil
   (should (equal "\ntext\nwords\t\r"
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    (string-utils-trim-whitespace "\n text \n words\t\r" 'syntax 'multi-line)))))
 
 (ert-deftest string-utils-trim-whitespace-10 nil
   (should (equal (concat "\ntext\nwords\t\r" (string (decode-char 'ucs #x0202f)))
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    ;; Narrow No-Break Space
                    (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax 'multi-line)))))
@@ -451,13 +451,13 @@
 
 (ert-deftest string-utils-compress-whitespace-05 nil
   (should (equal "\n text \n words \r"
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    (string-utils-compress-whitespace "\n text \n words\t\r" 'syntax)))))
 
 (ert-deftest string-utils-compress-whitespace-06 nil
   (should (equal (concat "\n text \n words \r" (string (decode-char 'ucs #x0202f)))
-                 (with-current-buffer "*scratch*"
+                 (with-temp-buffer
                    (emacs-lisp-mode)
                    ;; Narrow No-Break Space
                    (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax)))))
