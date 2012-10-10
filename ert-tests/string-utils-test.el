@@ -943,6 +943,101 @@
                  (string-utils-squeeze-filename "test_long_file_name_no_extension" 21 nil "…" 'no-tail))))
 
 
+;;; string-utils--repair-split-list
+
+(ert-deftest string-utils--repair-split-list-01 nil
+  (let* ((value "this:that:the:other")
+         (split-val (split-string value ":")))
+    (should
+     (equal split-val
+            (string-utils--repair-split-list split-val ":")))))
+
+(ert-deftest string-utils--repair-split-list-02 nil
+  (let* ((value "this:that:the\\:other")
+         (split-val (split-string value ":")))
+    (should
+     (equal '("this" "that" "the\\:other")
+            (string-utils--repair-split-list split-val ":")))))
+
+(ert-deftest string-utils--repair-split-list-03 nil
+  (let* ((value "this:that:the:other:")
+         (split-val (split-string value ":")))
+    (should
+     (equal split-val
+            (string-utils--repair-split-list split-val ":")))))
+
+(ert-deftest string-utils--repair-split-list-04 nil
+  (let* ((value "this:that:the:other\\:")
+         (split-val (split-string value ":")))
+    (should
+     (equal '("this" "that" "the" "other\\:")
+            (string-utils--repair-split-list split-val ":")))))
+
+;;; string-utils-split
+
+(ert-deftest string-utils-split-01 nil
+  (let ((value "this:that:the:other"))
+    (should
+     (equal '("this" "that" "the" "other")
+            (string-utils-split value ":")))))
+
+(ert-deftest string-utils-split-02 nil
+  (let ((value "this:that:the\\:other"))
+    (should
+     (equal '("this" "that" "the\\" "other")
+            (string-utils-split value ":")))
+    (should
+     (equal '("this" "that" "the\\:other")
+            (string-utils-split value ":" nil nil 'respect-escapes)))))
+
+(ert-deftest string-utils-split-03 nil
+  (let ((value "this:that:the:other:"))
+    (should
+     (equal '("this" "that" "the" "other" "")
+            (string-utils-split value ":")))
+    (should
+     (equal '("this" "that" "the" "other")
+            (string-utils-split value ":" 'omit-nulls)))))
+
+(ert-deftest string-utils-split-04 nil
+  (let ((value "this:that:the:other\\:"))
+    (should
+     (equal '("this" "that" "the" "other\\" "")
+            (string-utils-split value ":")))
+    (should
+     (equal '("this" "that" "the" "other\\")
+            (string-utils-split value ":" 'omit-nulls)))
+    (should
+     (equal '("this" "that" "the" "other\\:")
+            (string-utils-split value ":" nil nil 'respect-escapes)))
+    (should
+     (equal '("this" "that" "the" "other\\:")
+            (string-utils-split value ":" 'omit-nulls nil 'respect-escapes)))))
+
+(ert-deftest string-utils-split-05 nil
+  (let ((value "this:that:the\\::other"))
+    (should
+     (equal '("this" "that" "the\\" "" "other")
+            (string-utils-split value ":")))
+    (should
+     (equal '("this" "that" "the\\" "other")
+            (string-utils-split value ":" 'omit-nulls)))
+    (should
+     (equal '("this" "that" "the\\:" "other")
+            (string-utils-split value ":" nil nil 'respect-escapes)))
+    (should
+     (equal '("this" "that" "the\\:other")
+            (string-utils-split value ":" 'omit-nulls nil 'respect-escapes)))))
+
+(ert-deftest string-utils-split-06 nil
+  "Todo implement 'include-separators"
+  :expected-result :failed
+  (let ((value "this:that:the:other"))
+    (should
+     (equal '("this" ":" "that" ":" "the" ":" "other")
+            (string-utils-split value ":" nil 'include-separators)))))
+
+
 ;;
 ;; Emacs
 ;;

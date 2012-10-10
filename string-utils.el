@@ -52,6 +52,7 @@
 ;;     `string-utils-propertize-fillin'
 ;;     `string-utils-plural-ending'
 ;;     `string-utils-squeeze-filename'
+;;     `string-utils-split'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -729,6 +730,49 @@ a filename unless there is a dotted extension."
 
      ;; defensive driving - name should already be <= than MAXLEN
      (substring name 0 (min maxlen (length name))))))
+
+(defun string-utils--repair-split-list (list-val separator)
+  "Repair list LIST-VAL, split at string SEPARATOR, if SEPARATOR was escaped.
+
+The escape character is backslash \(\\\)."
+  (let ((ret-val nil))
+    (while list-val
+      (let ((top (pop list-val)))
+        (while (string-match-p "\\\\\\'" top)
+          (callf concat top separator)
+          (when list-val
+            (callf concat top (pop list-val))))
+        (push top ret-val)))
+    (setq ret-val (nreverse ret-val))))
+
+;; todo
+;;
+;;  - fully re-implement split-string, so that SEPARATORS may be a regexp when
+;;    respect-escapes is set.
+;;
+;;  - implement 'include-separators, allowing separators to be returned
+;;    in the list as with perl split
+;;
+;;  - remove string-utils--repair-split-list
+;;
+;;;###autoload
+(defun string-utils-split (string &optional separators omit-nulls include-separators respect-escapes)
+  "Like `split-string', with additional options.
+
+STRING, SEPARATORS, and OMIT-NULLS are as documented at `split-string'.
+
+INCLUDE-SEPARATORS is currently unimplmented.
+
+When RESPECT-ESCAPES is set, STRING is not split where the
+separator is escaped with backslash.  This currently has the
+limitation that SEPARATORS must be an explicit string rather than
+a regular expression."
+  (cond
+    (respect-escapes
+     (assert separators nil "SEPARATORS must be a string")
+     (string-utils--repair-split-list (split-string string separators omit-nulls) separators))
+    (t
+     (split-string string separators omit-nulls))))
 
 (provide 'string-utils)
 
