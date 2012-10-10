@@ -695,12 +695,12 @@ a filename unless there is a dotted extension."
            (let ((extension ""))
              (when (string-match "\\(\\.[^.]\\{1,6\\}\\)\\'" name)
                (setq extension (match-string 1 name))
-               (replace-match "" t t name 0))
+               (setq name (replace-match "" t t name 0)))
              (when (and (equal extension "")
                         (not no-tail)
                         (string-match ".\\(.\\{4\\}\\)\\'" name))
                (setq extension (match-string 1 name))
-               (replace-match "" t t name 1))
+               (setq name (replace-match "" t t name 1)))
 
              ;; these conditionals are just corner cases for small MAXLEN
              (when (>= (+ (length extension) (length ellipsis)) maxlen)
