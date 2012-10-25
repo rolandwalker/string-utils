@@ -24,8 +24,8 @@ Quickstart
   (sit-for 1))
 ```
 
-string-utils
-------------
+Explanation
+-----------
 
 String-utils is a collection of functions for string manipulation.
 This library has no user-level interface; it is only useful
