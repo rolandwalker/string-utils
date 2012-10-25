@@ -132,7 +132,7 @@
 ;;; Code:
 ;;
 
-;;; requires
+;;; requirements
 
 ;; for callf, callf2, assert
 (require 'cl)
@@ -142,6 +142,8 @@
 
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
+
+;;; declarations
 
 (declare-function object-name-string "eieio.el")
 
