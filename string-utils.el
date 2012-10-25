@@ -803,7 +803,7 @@ The escape character is backslash \(\\\)."
 
 STRING, SEPARATORS, and OMIT-NULLS are as documented at `split-string'.
 
-INCLUDE-SEPARATORS is currently unimplmented.
+INCLUDE-SEPARATORS is currently unimplemented.
 
 When RESPECT-ESCAPES is set, STRING is not split where the
 separator is escaped with backslash.  This currently has the
@@ -832,6 +832,7 @@ a regular expression."
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
 ;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat progn
 ;; LocalWords: defstruct stringified Stringification INTS ascii subr
+;; LocalWords: devel eieio EIEIO
 ;;
 
 ;;; string-utils.el ends here
