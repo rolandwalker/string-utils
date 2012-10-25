@@ -45,6 +45,7 @@ The following functions are provided:
 	string-utils-pad-list
 	string-utils-propertize-fillin
 	string-utils-squeeze-filename
+	string-utils-squeeze-url
 	string-utils-split
 
 The most complex function is `string-utils-pad`, the docstring

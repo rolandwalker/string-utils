@@ -52,6 +52,7 @@
 ;;     `string-utils-propertize-fillin'
 ;;     `string-utils-plural-ending'
 ;;     `string-utils-squeeze-filename'
+;;     `string-utils-squeeze-url'
 ;;     `string-utils-split'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
@@ -90,7 +91,8 @@
 ;;           (string-utils-propertize-fillin text 'face 'highlight)
 ;;           text)
 ;;
-;;      Adapt squeeze-filename for URLs
+;;      String-utils-squeeze-url needs improvement, sometimes using
+;;      two elisions where one would do.
 ;;
 ;;; License
 ;;
@@ -730,6 +732,44 @@ a filename unless there is a dotted extension."
 
      ;; defensive driving - name should already be <= than MAXLEN
      (substring name 0 (min maxlen (length name))))))
+
+;;;###autoload
+(defun string-utils-squeeze-url (url maxlen &optional ellipsis)
+  "Intelligibly squeeze string URL to fit within MAXLEN.
+
+Fit URL within MAXLEN for presentation to a human reader.
+Follows rules similar to `string-utils-squeeze-filename'.
+
+ELLIPSIS is a string inserted wherever characters were removed.
+It defaults to the UCS character \"Horizontal Ellipsis\", or
+\"...\" if extended characters are not displayable."
+  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (save-match-data
+    (let* ((parsed (url-generic-parse-url url))
+           (host (aref parsed 4))
+           (scheme (aref parsed 1))
+           (prefix "")
+           (rest-of-string url))
+      (cond
+        ((> (length host) 0)
+          (string-match (concat "\\`\\(.*?" (regexp-quote host) "[/?]*\\)") rest-of-string)
+          (setq prefix (match-string 1 rest-of-string))
+          (setq rest-of-string (replace-match "" t t rest-of-string 1)))
+        ((> (length scheme) 0)
+         (string-match (concat "\\`\\(" (regexp-quote scheme) "[/:]*\\)") rest-of-string)
+         (setq prefix (match-string 1 rest-of-string))
+         (setq rest-of-string (replace-match "" t t rest-of-string 1))))
+      (cond
+        ((or (> (length prefix) maxlen)
+             (and (= (length prefix) maxlen)
+                  (> (length rest-of-string) 0)))
+         ;; todo could drop leading "www" and attempt to preserve domain name
+         (callf substring url 0 (- maxlen (length ellipsis)))
+         (callf concat url ellipsis)
+         url)
+        (t
+         (concat prefix
+                 (string-utils-squeeze-filename rest-of-string (- maxlen (length prefix)) nil ellipsis)))))))
 
 (defun string-utils--repair-split-list (list-val separator)
   "Repair list LIST-VAL, split at string SEPARATOR, if SEPARATOR was escaped.
