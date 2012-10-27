@@ -246,6 +246,10 @@ an ordinary string."
     ((windowp obj)
      (buffer-name (window-buffer obj)))
 
+    ;; buffer
+    ((bufferp obj)
+     (buffer-name obj))
+
     ;; marker
     ((markerp obj)
      (string-utils-stringify-anything (list (marker-position obj)
