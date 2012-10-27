@@ -260,6 +260,14 @@
       (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
       (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
+(ert-deftest string-utils-stringify-anything-39 nil
+  "Stringify buffer name"
+  (let ((value "*scratch*"))
+    (with-current-buffer value
+      (should
+       (equal value
+              (string-utils-stringify-anything (current-buffer)))))))
+
 
 ;;; string-utils-has-darkspace-p
 
