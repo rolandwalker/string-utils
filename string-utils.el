@@ -321,21 +321,20 @@ an ordinary string."
 
     ;; list
     ((listp obj)
-     (let ((len (safe-length obj)))
+     (let* ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length))
+            (len (funcall measurer obj)))
        (if (and (consp obj)
                 (> len 0)
                 (not (listp (nthcdr len obj))))
            ;; cons or improper list would choke mapconcat
            (string-utils-stringify-anything (append (subseq obj 0 len) (list (nthcdr len obj))) separator ints-are-chars)
          ;; else
-         ;; truncate cyclic lists
-         (let ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length)))
-           (setq obj (subseq obj 0 (funcall measurer obj))))
          ;; accumulate output
          (let ((output nil))
            (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
-           (when (cdr obj)
-             (push (string-utils-stringify-anything (cdr obj) separator ints-are-chars) output))
+           (when (> len 1)
+             ;; the subseq is to break cyclic lists
+             (push (string-utils-stringify-anything (subseq obj 1 len) separator ints-are-chars) output))
            (mapconcat 'identity (nreverse output) separator)))))
 
     ;; defstruct

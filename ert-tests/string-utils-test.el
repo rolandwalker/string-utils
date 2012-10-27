@@ -212,6 +212,54 @@
                    (string-utils-stringify-anything improper)
                    improper))))
 
+(ert-deftest string-utils-stringify-anything-36 nil
+  "Don't modify cyclic lists"
+  (let ((cyclic-1 '(a b c d e f g h))
+        (cyclic-2 '(a b c d e f g h)))
+    (nconc cyclic-1 cyclic-1)
+    (nconc cyclic-2 cyclic-2)
+    (should (equal "a b c d e f g h"
+                   (string-utils-stringify-anything cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+
+(ert-deftest string-utils-stringify-anything-37 nil
+  "Don't modify cyclic lists"
+  (let ((cyclic-1 '(a b c d e f g h))
+        (cyclic-2 '(a b c d e f g h)))
+    (nconc cyclic-1 (cdr cyclic-1))
+    (nconc cyclic-2 (cdr cyclic-2))
+    (should (equal "a b c d e f g h"
+                   (string-utils-stringify-anything cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+
+(ert-deftest string-utils-stringify-anything-38 nil
+  "Don't modify cyclic lists, handle cyclic lists of one element"
+  (let ((cyclic-1 '(a))
+        (cyclic-2 '(a)))
+    (nconc cyclic-1 cyclic-1)
+    (nconc cyclic-2 cyclic-2)
+    (should (equal "a"
+                   (string-utils-stringify-anything cyclic-1)))
+    (should
+     (equal (list-utils-linear-subseq cyclic-1)
+            (list-utils-linear-subseq cyclic-2)))
+    (should
+     (equal
+      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+
 
 ;;; string-utils-has-darkspace-p
 
