@@ -205,6 +205,13 @@
                    (nconc cyclic cyclic)
                    (string-utils-stringify-anything cyclic)))))
 
+(ert-deftest string-utils-stringify-anything-35 nil
+  "Don't modify improper lists"
+  (should (equal (list* 1 2 3)
+                 (let ((improper (list* 1 2 3)))
+                   (string-utils-stringify-anything improper)
+                   improper))))
+
 
 ;;; string-utils-has-darkspace-p
 

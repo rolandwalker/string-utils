@@ -321,21 +321,22 @@ an ordinary string."
 
     ;; list
     ((listp obj)
-     ;; convert cons cells into lists before mapconcat chokes
-     (when (let ((len (safe-length obj)))
-             (and (consp obj)
-                  (> len 0)
-                  (not (listp (nthcdr len obj)))))
-       (callf list (nthcdr (safe-length obj) obj)))
-     ;; truncate cyclic lists
-     (let ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length)))
-       (setq obj (subseq obj 0 (funcall measurer obj))))
-     ;; accumulate output
-     (let ((output nil))
-       (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
-       (when (cdr obj)
-         (push (string-utils-stringify-anything (cdr obj) separator ints-are-chars) output))
-       (mapconcat 'identity (nreverse output) separator)))
+     (let ((len (safe-length obj)))
+       (if (and (consp obj)
+                (> len 0)
+                (not (listp (nthcdr len obj))))
+           ;; cons or improper list would choke mapconcat
+           (string-utils-stringify-anything (append (subseq obj 0 len) (list (nthcdr len obj))) separator ints-are-chars)
+         ;; else
+         ;; truncate cyclic lists
+         (let ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length)))
+           (setq obj (subseq obj 0 (funcall measurer obj))))
+         ;; accumulate output
+         (let ((output nil))
+           (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
+           (when (cdr obj)
+             (push (string-utils-stringify-anything (cdr obj) separator ints-are-chars) output))
+           (mapconcat 'identity (nreverse output) separator)))))
 
     ;; defstruct
     ((and (vectorp obj)
