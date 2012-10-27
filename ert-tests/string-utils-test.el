@@ -156,11 +156,11 @@
                  (string-utils-stringify-anything (symbol-function 'message)))))
 
 (ert-deftest string-utils-stringify-anything-30 nil
-  (should (equal "my_id"
-                 (progn
-                   (defclass tester nil
-                     ((uid)))
-                   (string-utils-stringify-anything (tester "my_id"))))))
+  (let ((value "object_name"))
+    (defclass string-utils-tester nil
+      ((uid :initarg :uid)))
+    (should (equal value
+                   (string-utils-stringify-anything (string-utils-tester value))))))
 
 (ert-deftest string-utils-stringify-anything-31 nil
   "Stringify window title"
