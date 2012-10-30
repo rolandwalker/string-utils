@@ -388,11 +388,11 @@ an ordinary string."
      (let ((output nil))
        (mapatoms #'(lambda (sym)
                      (when (> (length (symbol-name sym)) 0)
-                       (push (symbol-name sym) output)
                        (if (stringp (symbol-value sym))
                            (push (symbol-value sym) output)
-                         (push (symbol-function sym) output)))) obj)
-       (string-utils-stringify-anything (nreverse output) separator ints-are-chars)))
+                         (push (symbol-function sym) output))
+                       (push (symbol-name sym) output))) obj)
+       (string-utils-stringify-anything output separator ints-are-chars)))
 
     ;; ordinary vector
     ((vectorp obj)

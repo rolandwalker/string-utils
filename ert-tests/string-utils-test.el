@@ -295,8 +295,9 @@
      (equal ""
             (string-utils-stringify-anything value)))
     (define-abbrev value "twoo" "two")
+    (define-abbrev value "threee" "three")
     (should
-     (equal "twoo two"
+     (equal "twoo two threee three"
             (string-utils-stringify-anything value)))))
 
 (ert-deftest string-utils-stringify-anything-42 nil
