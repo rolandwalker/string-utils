@@ -288,6 +288,17 @@
      (equal "2 1"
             (string-utils-stringify-anything value)))))
 
+(ert-deftest string-utils-stringify-anything-41 nil
+  "Stringify abbrev table"
+  (let ((value (make-abbrev-table)))
+    (should
+     (equal ""
+            (string-utils-stringify-anything value)))
+    (define-abbrev value "twoo" "two")
+    (should
+     (equal "twoo two"
+            (string-utils-stringify-anything value)))))
+
 
 ;;; string-utils-has-darkspace-p
 

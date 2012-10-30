@@ -354,6 +354,17 @@ an ordinary string."
      (mapconcat #'(lambda (x)
                     (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
 
+    ;; abbrev-table
+    ((ignore-errors (abbrev-table-p obj))
+     (let ((output nil))
+       (mapatoms #'(lambda (sym)
+                     (when (> (length (symbol-name sym)) 0)
+                       (push (symbol-name sym) output)
+                       (if (stringp (symbol-value sym))
+                           (push (symbol-value sym) output)
+                         (push (symbol-function sym) output)))) obj)
+       (string-utils-stringify-anything (nreverse output) separator ints-are-chars)))
+
     ;; ordinary vector
     ((vectorp obj)
      (mapconcat #'(lambda (x)
