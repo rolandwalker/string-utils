@@ -78,6 +78,12 @@
 ;;
 ;; TODO
 ;;
+;;     Stringification of autoload data type
+;;         http://www.gnu.org/software/emacs/manual/html_node/elisp/Autoload-Type.html
+;;
+;;     Maybe args should not be included when stringifying lambdas and
+;;     macros.
+;;
 ;;     In string-utils-propertize-fillin, strip properties which are
 ;;     set to nil at start, which will create more contiguity in the
 ;;     result.  See this example, where the first two characters have
@@ -132,7 +138,7 @@
 
 ;;; requirements
 
-;; for callf, callf2, assert
+;; for callf, callf2, assert, loop
 (require 'cl)
 
 (require 'eieio nil t)
