@@ -266,7 +266,7 @@ an ordinary string."
 
     ;; ring
     ((ring-p obj)
-     (string-utils-stringify-anything (ring-elements obj)))
+     (string-utils-stringify-anything (ring-elements obj) separator ints-are-chars))
 
     ;; EIEIO object
     ((and (fboundp 'object-p)
