@@ -78,8 +78,6 @@
 ;;
 ;; TODO
 ;;
-;;     Useful stringification for network and serial processes
-;;
 ;;     In string-utils-propertize-fillin, strip properties which are
 ;;     set to nil at start, which will create more contiguity in the
 ;;     result.  See this example, where the first two characters have
@@ -260,7 +258,32 @@ an ordinary string."
      (string-utils-stringify-anything (list (overlay-start obj)
                                             (overlay-end obj)
                                             (overlay-buffer obj)) separator ints-are-chars))
-    ;; process
+
+    ;; network process
+    ((and (processp obj)
+          (eq 'network (process-type obj)))
+     (let ((contact (process-contact obj t)))
+       (cond
+         ((and (plist-get contact :server)
+               (or (plist-get contact :family)
+                   (plist-get contact :service)))
+          (format "%s:%s"
+                  (or (plist-get contact :family) "")
+                  (or (plist-get contact :service) "")))
+         ((plist-get contact :host)
+          (format "%s" (plist-get contact :host)))
+         (t
+          "network_process"))))
+
+    ;; serial process
+    ((and (processp obj)
+          (eq 'serial (process-type obj)))
+     (let ((contact (process-contact obj t)))
+       (format "%s" (or (plist-get contact :name)
+                        (plist-get contact :port)
+                        "serial_process"))))
+
+    ;; real process
     ((processp obj)
      (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
 

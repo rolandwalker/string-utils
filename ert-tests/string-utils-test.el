@@ -299,6 +299,34 @@
      (equal "twoo two"
             (string-utils-stringify-anything value)))))
 
+(ert-deftest string-utils-stringify-anything-42 nil
+  "Stringify Network process"
+  (let ((result nil))
+    (require 'server)
+    (unless (server-running-p server-name)
+      (server-start)
+      (sleep-for 1))
+    (setq result (catch 'server
+                   (dolist (proc (process-list))
+                     (when (eq 'network (process-type proc))
+                       (throw 'server (string-utils-stringify-anything proc))))))
+    (should
+     (and (stringp result)
+          (or (equal "network_process" result)
+              (string-match-p "\\`.+:.+\\'" result))))))
+
+;; todo make this test reliable and portable
+;;
+;; (ert-deftest string-utils-stringify-anything-43 nil
+;;   "Stringify serial process"
+;;   (let* ((value "/dev/tty")
+;;          (proc (make-serial-process :port value :speed 9600)))
+;;     (should
+;;      (equal value
+;;             (string-utils-stringify-anything proc)))
+;;     (stop-process proc)
+;;     (delete-process proc)))
+
 
 ;;; string-utils-has-darkspace-p
 
