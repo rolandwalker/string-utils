@@ -327,6 +327,13 @@
 ;;     (stop-process proc)
 ;;     (delete-process proc)))
 
+(ert-deftest string-utils-stringify-anything-44 nil
+  "Stringify macro"
+  (let ((value (defmacro string-utils-tester () 1)))
+    (should
+     (equal " 1"
+            (string-utils-stringify-anything (symbol-function value))))))
+
 
 ;;; string-utils-has-darkspace-p
 

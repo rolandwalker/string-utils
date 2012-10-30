@@ -347,6 +347,12 @@ an ordinary string."
          (frame-configuration-p obj))
      (string-utils-stringify-anything (cdr obj) separator ints-are-chars))
 
+    ;; macro
+    ((and (listp obj)
+          (eq 'macro (car obj))
+          (functionp (cdr obj)))
+     (string-utils-stringify-anything (cddr obj) separator ints-are-chars))
+
     ;; list
     ((listp obj)
      (let* ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length))
