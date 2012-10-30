@@ -36,6 +36,9 @@ TEST_DEP_1_LATEST_URL=https://raw.github.com/emacsmirror/emacs/master/lisp/emacs
 TEST_DEP_2=list-utils
 TEST_DEP_2_STABLE_URL=https://raw.github.com/rolandwalker/list-utils/a34f1d5c0be3faadd76680509e958797a60c0a41/list-utils.el
 TEST_DEP_2_LATEST_URL=https://raw.github.com/rolandwalker/list-utils/master/list-utils.el
+TEST_DEP_3=obarray-fns
+TEST_DEP_3_STABLE_URL=https://raw.github.com/emacsmirror/obarray-fns/94b37c80bf350d5c89e9f2552afdfe666e014747/obarray-fns.el
+TEST_DEP_3_LATEST_URL=https://raw.github.com/emacsmirror/obarray-fns/master/obarray-fns.el
 
 .PHONY : build dist not-dirty pkg-version downloads downloads-latest autoloads \
  test-autoloads test-travis test test-prep test-batch test-interactive         \
@@ -74,13 +77,20 @@ test-dep-2 :
 	      (require '$(TEST_DEP_2)))"                  || \
 	(echo "Can't load test dependency $(TEST_DEP_2).el, run 'make downloads' to fetch it" ; exit 1)
 
+test-dep-3 :
+	@cd '$(TEST_DIR)'                                               && \
+	$(RESOLVED_EMACS) $(EMACS_BATCH)  -L . -L .. -l '$(TEST_DEP_3)' || \
+	(echo "Can't load test dependency $(TEST_DEP_3).el, run 'make downloads' to fetch it" ; exit 1)
+
 downloads :
 	$(CURL) '$(TEST_DEP_1_STABLE_URL)' > '$(TEST_DIR)/$(TEST_DEP_1).el'
 	$(CURL) '$(TEST_DEP_2_STABLE_URL)' > '$(TEST_DIR)/$(TEST_DEP_2).el'
+	$(CURL) '$(TEST_DEP_3_STABLE_URL)' > '$(TEST_DIR)/$(TEST_DEP_3).el'
 
 downloads-latest :
 	$(CURL) '$(TEST_DEP_1_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_1).el'
 	$(CURL) '$(TEST_DEP_2_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_2).el'
+	$(CURL) '$(TEST_DEP_3_LATEST_URL)' > '$(TEST_DIR)/$(TEST_DEP_3).el'
 
 autoloads :
 	$(RESOLVED_EMACS) $(EMACS_BATCH) --eval              \
@@ -98,7 +108,7 @@ test-travis :
 test-tests :
 	@perl -ne 'if (m/^\s*\(\s*ert-deftest\s*(\S+)/) {die "$$1 test name duplicated in $$ARGV\n" if $$dupes{$$1}++}' '$(TEST_DIR)/'*-test.el
 
-test-prep : build test-dep-1 test-dep-2 test-autoloads test-travis test-tests
+test-prep : build test-dep-1 test-dep-2 test-dep-3 test-autoloads test-travis test-tests
 
 test-batch :
 	@cd '$(TEST_DIR)'                                 && \
@@ -136,6 +146,7 @@ test-interactive : test-prep
 
 test : test-prep test-batch
 
+# TEST_DEP_3 not available from package manager
 run-pristine :
 	@cd '$(TEST_DIR)'                                              && \
 	$(RESOLVED_EMACS) $(EMACS_CLEAN) --eval                           \

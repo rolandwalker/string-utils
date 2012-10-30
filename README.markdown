@@ -89,4 +89,4 @@ Compatibility and Requirements
 	GNU Emacs version 23.3           : yes
 	GNU Emacs version 22.3 and lower : no
 
-Uses if present: [list-utils.el](http://github.com/rolandwalker/list-utils)
+Uses if present: [list-utils.el](http://github.com/rolandwalker/list-utils), [obarray-fns.el](http://www.splode.com/~friedman/software/emacs-lisp/src/obarray-fns.el)

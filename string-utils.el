@@ -69,7 +69,7 @@
 ;;     GNU Emacs version 23.3           : yes
 ;;     GNU Emacs version 22.3 and lower : no
 ;;
-;;     Uses if present: list-utils.el
+;;     Uses if present: list-utils.el, obarray-fns.el
 ;;
 ;; Bugs
 ;;
@@ -137,6 +137,7 @@
 
 (require 'eieio nil t)
 (require 'list-utils nil t)
+(require 'obarray-fns nil t)
 
 (autoload 'font-lock-fillin-text-property "font-lock"
   "Fill in one property of the text from START to END.")
@@ -392,6 +393,16 @@ an ordinary string."
                            (push (symbol-value sym) output)
                          (push (symbol-function sym) output))
                        (push (symbol-name sym) output))) obj)
+       (string-utils-stringify-anything output separator ints-are-chars)))
+
+    ;; obarray
+    ((and (fboundp 'obarrayp)
+          (obarrayp obj))
+     (let ((output nil))
+       (mapatoms #'(lambda (sym)
+                     (when (boundp sym)
+                       (push (symbol-value sym) output)
+                       (push sym output))) obj)
        (string-utils-stringify-anything output separator ints-are-chars)))
 
     ;; ordinary vector

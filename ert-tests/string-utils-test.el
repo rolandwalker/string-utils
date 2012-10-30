@@ -10,6 +10,7 @@
 (require 'string-utils)
 (require 'eieio)
 (require 'list-utils)
+(require 'obarray-fns)
 
 ;;; string-utils-stringify-anything
 
@@ -334,6 +335,16 @@
     (should
      (equal " 1"
             (string-utils-stringify-anything (symbol-function value))))))
+
+(ert-deftest string-utils-stringify-anything-45 nil
+  "Stringify obarray"
+  (let ((value (make-vector 10 0)))
+    (set (intern "var-1" value) 1)
+    (set (intern "var-2" value) 2)
+    (set (intern "var-3" value) 3)
+    (should
+     (equal "var-1 1 var-2 2 var-3 3"
+            (string-utils-stringify-anything value)))))
 
 
 ;;; string-utils-has-darkspace-p
