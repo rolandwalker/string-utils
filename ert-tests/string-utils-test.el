@@ -1042,107 +1042,107 @@
 (ert-deftest string-utils-squeeze-url-01 nil
   (should
    (equal "http…"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 5))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 5 "…"))))
 
 (ert-deftest string-utils-squeeze-url-02 nil
   (should
    (equal "http://ww…"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 10))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 10 "…"))))
 
 (ert-deftest string-utils-squeeze-url-03 nil
   (should
    (equal "http://www.example.com/…/stor…"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 30))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 30 "…"))))
 
 (ert-deftest string-utils-squeeze-url-04 nil
   (should
    (equal "http://www.example.com/…/story.php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 35))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 35 "…"))))
 
 (ert-deftest string-utils-squeeze-url-05 nil
   (should
    (equal "http://www.example.com/…/with/story.php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 40))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/story.php" 40 "…"))))
 
 (ert-deftest string-utils-squeeze-url-06 nil
   (should
    (equal "http://ww…"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 10))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 10 "…"))))
 
 (ert-deftest string-utils-squeeze-url-07 nil
   (should
    (equal "http://www.example.com/…/long…"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 30))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 30 "…"))))
 
 (ert-deftest string-utils-squeeze-url-08 nil
   (should
    (equal "http://www.example.com/…/long-….php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 35))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 35 "…"))))
 
 (ert-deftest string-utils-squeeze-url-09 nil
   (should
    (equal "http://www.example.com/…/long-seo-n….php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 40))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 40 "…"))))
 
 (ert-deftest string-utils-squeeze-url-10 nil
   (should
    (equal "http://www.example.com/…/long-seo-name-with-d….php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 50))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 50 "…"))))
 
 (ert-deftest string-utils-squeeze-url-11 nil
   (should
    (equal "http://www.example.com/…/with/long-seo-name-with-details.php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 60))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 60 "…"))))
 
 (ert-deftest string-utils-squeeze-url-12 nil
   (should
    (equal "http://www.example.com/…/to/story/with/long-seo-name-with-details.php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 70))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 70 "…"))))
 
 (ert-deftest string-utils-squeeze-url-13 nil
   (should
    (equal "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php"
-          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 80))))
+          (string-utils-squeeze-url "http://www.example.com/deep/path/to/story/with/long-seo-name-with-details.php" 80 "…"))))
 
 (ert-deftest string-utils-squeeze-url-14 nil
   (should
    (equal "http://ww…"
-          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 10))))
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 10 "…"))))
 
 (ert-deftest string-utils-squeeze-url-15 nil
   (should
    (equal "http://www.example.com?var1=v…"
-          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 30))))
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 30 "…"))))
 
 (ert-deftest string-utils-squeeze-url-16 nil
   (should
    (equal "http://www.example.com?var1=value&var2=value&var3=valu…"
-          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 55))))
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 55 "…"))))
 
 (ert-deftest string-utils-squeeze-url-17 nil
   (should
    (equal "mail…"
-          (string-utils-squeeze-url "mailto:some_user@example.com" 5))))
+          (string-utils-squeeze-url "mailto:some_user@example.com" 5 "…"))))
 
 (ert-deftest string-utils-squeeze-url-18 nil
   (should
    (equal "mailto:so…"
-          (string-utils-squeeze-url "mailto:some_user@example.com" 10))))
+          (string-utils-squeeze-url "mailto:some_user@example.com" 10 "…"))))
 
 (ert-deftest string-utils-squeeze-url-19 nil
   (should
    (equal "mailto:som….com"
-          (string-utils-squeeze-url "mailto:some_user@example.com" 15))))
+          (string-utils-squeeze-url "mailto:some_user@example.com" 15 "…"))))
 
 (ert-deftest string-utils-squeeze-url-20 nil
   (should
    (equal "mailto:some_use….com"
-          (string-utils-squeeze-url "mailto:some_user@example.com" 20))))
+          (string-utils-squeeze-url "mailto:some_user@example.com" 20 "…"))))
 
 (ert-deftest string-utils-squeeze-url-21 nil
   (should
    (equal "mailto:some_user@example.com"
-          (string-utils-squeeze-url "mailto:some_user@example.com" 30))))
+          (string-utils-squeeze-url "mailto:some_user@example.com" 30 "…"))))
 
 
 ;;; string-utils--repair-split-list
