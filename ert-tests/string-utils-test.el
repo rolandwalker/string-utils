@@ -268,6 +268,26 @@
        (equal value
               (string-utils-stringify-anything (current-buffer)))))))
 
+(ert-deftest string-utils-stringify-anything-40 nil
+  "Stringify ring"
+  (let ((value (make-ring 10)))
+    (should
+     (equal ""
+            (string-utils-stringify-anything value)))
+    (ring-insert value "")
+    (should
+     (equal ""
+            (string-utils-stringify-anything value)))
+    (ring-remove value)
+    (ring-insert value 1)
+    (should
+     (equal "1"
+            (string-utils-stringify-anything value)))
+    (ring-insert value 2)
+    (should
+     (equal "2 1"
+            (string-utils-stringify-anything value)))))
+
 
 ;;; string-utils-has-darkspace-p
 

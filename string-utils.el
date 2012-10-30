@@ -146,6 +146,7 @@
 ;;; declarations
 
 (declare-function object-name-string "eieio.el")
+(declare-function ring-elements      "ring.el")
 
 ;; variables
 
@@ -262,6 +263,10 @@ an ordinary string."
     ;; process
     ((processp obj)
      (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
+
+    ;; ring
+    ((ring-p obj)
+     (string-utils-stringify-anything (ring-elements obj)))
 
     ;; EIEIO object
     ((and (fboundp 'object-p)
