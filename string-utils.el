@@ -390,10 +390,10 @@ an ordinary string."
        (mapatoms #'(lambda (sym)
                      (when (> (length (symbol-name sym)) 0)
                        (if (stringp (symbol-value sym))
-                           (push (symbol-value sym) output)
-                         (push (symbol-function sym) output))
-                       (push (symbol-name sym) output))) obj)
-       (string-utils-stringify-anything output separator ints-are-chars)))
+                           (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars) output)
+                         (push (string-utils-stringify-anything (symbol-function sym) separator ints-are-chars) output))
+                       (push (string-utils-stringify-anything sym separator ints-are-chars) output))) obj)
+       (mapconcat 'identity output separator)))
 
     ;; obarray
     ((and (fboundp 'obarrayp)
@@ -401,9 +401,9 @@ an ordinary string."
      (let ((output nil))
        (mapatoms #'(lambda (sym)
                      (when (boundp sym)
-                       (push (symbol-value sym) output)
-                       (push sym output))) obj)
-       (string-utils-stringify-anything output separator ints-are-chars)))
+                       (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars) output)
+                       (push (string-utils-stringify-anything sym separator ints-are-chars) output))) obj)
+       (mapconcat 'identity output separator)))
 
     ;; ordinary vector
     ((vectorp obj)
