@@ -929,7 +929,7 @@ a regular expression."
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
 ;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat progn
 ;; LocalWords: defstruct stringified Stringification INTS ascii subr
-;; LocalWords: devel eieio EIEIO
+;; LocalWords: devel eieio EIEIO subseq obarray
 ;;
 
 ;;; string-utils.el ends here
