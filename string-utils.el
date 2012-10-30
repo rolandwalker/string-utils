@@ -300,7 +300,7 @@ an ordinary string."
     ((fontp obj)
      (string-utils-stringify-anything (or (font-get obj :name)
                                           (font-get obj :family)
-                                          "") separator))
+                                          "") separator ints-are-chars))
 
     ;; font vector as returned by `font-info'
     ((and (vectorp obj)
