@@ -197,7 +197,7 @@ Includes Unicode whitespace characters.")
 ;;; utility functions
 
 ;;;###autoload
-(defun string-utils-stringify-anything (obj &optional separator ints-are-chars)
+(defun string-utils-stringify-anything (obj &optional separator ints-are-chars record-separator)
   "Coerce any object OBJ into a string.
 
 Contrary to usual conventions, return the empty string for nil.
@@ -210,10 +210,15 @@ list-utils.el is installed.
 When INTS-ARE-CHARS is non-nil, interpret positive integers in
 OBJ as characters.
 
+Optional RECORD-SEPARATOR is a string (defaulting to the value of
+SEPARATOR) which delimits end-of-record for paired data types
+such as hash tables.
+
 This is not a pretty-printer for OBJ, but a way to look at
 the *contents* of OBJ (so much as is possible) as if it was
 an ordinary string."
   (callf or separator " ")
+  (callf or record-separator separator)
   (cond
 
     ;; nil
@@ -253,12 +258,12 @@ an ordinary string."
     ;; marker
     ((markerp obj)
      (string-utils-stringify-anything (list (marker-position obj)
-                                            (marker-buffer obj)) separator ints-are-chars))
+                                            (marker-buffer obj)) separator ints-are-chars record-separator))
     ;; overlay
     ((overlayp obj)
      (string-utils-stringify-anything (list (overlay-start obj)
                                             (overlay-end obj)
-                                            (overlay-buffer obj)) separator ints-are-chars))
+                                            (overlay-buffer obj)) separator ints-are-chars record-separator))
 
     ;; network process
     ((and (processp obj)
@@ -286,11 +291,11 @@ an ordinary string."
 
     ;; real process
     ((processp obj)
-     (string-utils-stringify-anything (process-command obj) separator ints-are-chars))
+     (string-utils-stringify-anything (process-command obj) separator ints-are-chars record-separator))
 
     ;; ring
     ((ring-p obj)
-     (string-utils-stringify-anything (ring-elements obj) separator ints-are-chars))
+     (string-utils-stringify-anything (ring-elements obj) separator ints-are-chars record-separator))
 
     ;; EIEIO object
     ((and (fboundp 'object-p)
@@ -301,7 +306,7 @@ an ordinary string."
     ((fontp obj)
      (string-utils-stringify-anything (or (font-get obj :name)
                                           (font-get obj :family)
-                                          "") separator ints-are-chars))
+                                          "") separator ints-are-chars record-separator))
 
     ;; font vector as returned by `font-info'
     ((and (vectorp obj)
@@ -321,17 +326,33 @@ an ordinary string."
     ((hash-table-p obj)
      (let ((output nil))
        (maphash #'(lambda (k v)
-                    (push (string-utils-stringify-anything k separator ints-are-chars) output)
-                    (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
-       (mapconcat 'identity (nreverse output) separator)))
+                    (push (string-utils-stringify-anything k separator ints-are-chars record-separator) output)
+                    (push (string-utils-stringify-anything v separator ints-are-chars record-separator) output)) obj)
+       (mapconcat 'identity
+                  (nbutlast
+                   (loop for (k v) on (nreverse output) by 'cddr
+                         collect k
+                         collect separator
+                         collect v
+                         collect record-separator)
+                   (if (equal record-separator separator) 1 0))
+                  "")))
 
     ;; char-table
     ((char-table-p obj)
      (let ((output nil))
        (map-char-table #'(lambda (k v)
-                           (push (string-utils-stringify-anything k separator t) output)
-                           (push (string-utils-stringify-anything v separator ints-are-chars) output)) obj)
-       (mapconcat 'identity (nreverse output) separator)))
+                           (push (string-utils-stringify-anything k separator t record-separator) output)
+                           (push (string-utils-stringify-anything v separator ints-are-chars record-separator) output)) obj)
+       (mapconcat 'identity
+                  (nbutlast
+                   (loop for (k v) on (nreverse output) by 'cddr
+                         collect k
+                         collect separator
+                         collect v
+                         collect record-separator)
+                   (if (equal record-separator separator) 1 0))
+                  "")))
 
     ;; subr
     ((subrp obj)
@@ -340,19 +361,19 @@ an ordinary string."
     ;; compiled byte-code
     ((byte-code-function-p obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars record-separator)) (append obj nil) separator))
 
     ;; keymap, function, frame-configuration
     ((or (keymapp obj)
          (functionp obj)
          (frame-configuration-p obj))
-     (string-utils-stringify-anything (cdr obj) separator ints-are-chars))
+     (string-utils-stringify-anything (cdr obj) separator ints-are-chars record-separator))
 
     ;; macro
     ((and (listp obj)
           (eq 'macro (car obj))
           (functionp (cdr obj)))
-     (string-utils-stringify-anything (cddr obj) separator ints-are-chars))
+     (string-utils-stringify-anything (cddr obj) separator ints-are-chars record-separator))
 
     ;; list
     ((listp obj)
@@ -362,14 +383,14 @@ an ordinary string."
                 (> len 0)
                 (not (listp (nthcdr len obj))))
            ;; cons or improper list would choke mapconcat
-           (string-utils-stringify-anything (append (subseq obj 0 len) (list (nthcdr len obj))) separator ints-are-chars)
+           (string-utils-stringify-anything (append (subseq obj 0 len) (list (nthcdr len obj))) separator ints-are-chars record-separator)
          ;; else
          ;; accumulate output
          (let ((output nil))
-           (push (string-utils-stringify-anything (car obj) separator ints-are-chars) output)
+           (push (string-utils-stringify-anything (car obj) separator ints-are-chars record-separator) output)
            (when (> len 1)
              ;; the subseq is to break cyclic lists
-             (push (string-utils-stringify-anything (subseq obj 1 len) separator ints-are-chars) output))
+             (push (string-utils-stringify-anything (subseq obj 1 len) separator ints-are-chars record-separator) output))
            (mapconcat 'identity (nreverse output) separator)))))
 
     ;; defstruct
@@ -377,12 +398,12 @@ an ordinary string."
           (symbolp (aref obj 0))
           (string-match-p "\\`cl-" (symbol-name (aref obj 0))))
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator ints-are-chars)) (cdr (append obj nil)) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars record-separator)) (cdr (append obj nil)) separator))
 
     ;; bool-vector
     ((bool-vector-p obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator ints-are-chars)) (append obj nil) separator))
+                    (string-utils-stringify-anything x separator ints-are-chars record-separator)) (append obj nil) separator))
 
     ;; abbrev-table
     ((ignore-errors (abbrev-table-p obj))
@@ -390,10 +411,18 @@ an ordinary string."
        (mapatoms #'(lambda (sym)
                      (when (> (length (symbol-name sym)) 0)
                        (if (stringp (symbol-value sym))
-                           (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars) output)
-                         (push (string-utils-stringify-anything (symbol-function sym) separator ints-are-chars) output))
-                       (push (string-utils-stringify-anything sym separator ints-are-chars) output))) obj)
-       (mapconcat 'identity output separator)))
+                           (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars record-separator) output)
+                         (push (string-utils-stringify-anything (symbol-function sym) separator ints-are-chars record-separator) output))
+                       (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))) obj)
+       (mapconcat 'identity
+                  (nbutlast
+                   (loop for (k v) on output by 'cddr
+                         collect k
+                         collect separator
+                         collect v
+                         collect record-separator)
+                   (if (equal record-separator separator) 1 0))
+                  "")))
 
     ;; obarray
     ((and (fboundp 'obarrayp)
@@ -401,14 +430,22 @@ an ordinary string."
      (let ((output nil))
        (mapatoms #'(lambda (sym)
                      (when (boundp sym)
-                       (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars) output)
-                       (push (string-utils-stringify-anything sym separator ints-are-chars) output))) obj)
-       (mapconcat 'identity output separator)))
+                       (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars record-separator) output)
+                       (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))) obj)
+       (mapconcat 'identity
+                  (nbutlast
+                   (loop for (k v) on output by 'cddr
+                         collect k
+                         collect separator
+                         collect v
+                         collect record-separator)
+                   (if (equal record-separator separator) 1 0))
+                  "")))
 
     ;; ordinary vector
     ((vectorp obj)
      (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator ints-are-chars)) obj separator))
+                    (string-utils-stringify-anything x separator ints-are-chars record-separator)) obj separator))
 
     ;; fallback
     (t

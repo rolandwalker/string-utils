@@ -68,11 +68,15 @@
 
 (ert-deftest string-utils-stringify-anything-14 nil
   ;; not really sure if order is guaranteed here
-  (should (equal "one 1 two 2"
-                 (let ((tester (make-hash-table)))
-                   (puthash "one" 1 tester)
-                   (puthash "two" 2 tester)
-                   (string-utils-stringify-anything tester)))))
+  (let ((tester (make-hash-table)))
+    (puthash "one" 1 tester)
+    (puthash "two" 2 tester)
+  (should
+   (equal "one 1 two 2"
+          (string-utils-stringify-anything tester)))
+  (should
+   (equal "one 1\ntwo 2\n"
+          (string-utils-stringify-anything tester nil nil "\n")))))
 
 (ert-deftest string-utils-stringify-anything-15 nil
   (should (equal ""
@@ -139,10 +143,15 @@
                  (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10")))))
 
 (ert-deftest string-utils-stringify-anything-26 nil
-  (should (equal "a b 3"
-                 (let ((tester (make-char-table 'testing)))
-                   (set-char-table-range tester '(?a . ?b) 3)
-                   (string-utils-stringify-anything tester)))))
+  (let ((tester (make-char-table 'testing)))
+    (set-char-table-range tester '(?a . ?b) 3)
+    (set-char-table-range tester '(?g . ?h) 5)
+  (should
+   (equal "a b 3 g h 5"
+          (string-utils-stringify-anything tester)))
+  (should
+   (equal "a b 3\ng h 5\n"
+          (string-utils-stringify-anything tester nil nil "\n")))))
 
 (ert-deftest string-utils-stringify-anything-27 nil
   (should (equal "Monaco"
@@ -299,7 +308,10 @@
     (define-abbrev value "threee" "three")
     (should
      (equal "twoo two threee three"
-            (string-utils-stringify-anything value)))))
+            (string-utils-stringify-anything value)))
+    (should
+     (equal "twoo two\nthreee three\n"
+            (string-utils-stringify-anything value nil nil "\n")))))
 
 (ert-deftest string-utils-stringify-anything-42 nil
   "Stringify Network process"
@@ -344,7 +356,10 @@
     (set (intern "var-3" value) 3)
     (should
      (equal "var-1 1 var-2 2 var-3 3"
-            (string-utils-stringify-anything value)))))
+            (string-utils-stringify-anything value)))
+    (should
+     (equal "var-1 1\nvar-2 2\nvar-3 3\n"
+            (string-utils-stringify-anything value nil nil "\n")))))
 
 
 ;;; string-utils-has-darkspace-p
