@@ -54,6 +54,7 @@
 ;;     `string-utils-squeeze-filename'
 ;;     `string-utils-squeeze-url'
 ;;     `string-utils-split'
+;;     `string-utils-truncate-to'
 ;;
 ;; To use string-utils, place the string-utils.el library somewhere
 ;; Emacs can find it, and add the following to your ~/.emacs file:
@@ -918,6 +919,26 @@ a regular expression."
      (string-utils--repair-split-list (split-string string separators omit-nulls) separators))
     (t
      (split-string string separators omit-nulls))))
+
+;;;###autoload
+(defun string-utils-truncate-to (str-val maxlen &optional ellipsis)
+  "Truncate STRING to MAXLEN.
+
+The returned value is of length MAXLEN or less, including
+ELLIPSIS.
+
+ELLIPSIS is a string inserted wherever characters were removed.
+It defaults to the UCS character \"Horizontal Ellipsis\", or
+\"...\" if extended characters are not displayable."
+  ;; character x2026 = Horizontal Ellipsis
+  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (when (> (length str-val) maxlen)
+    (if (>= (length ellipsis) maxlen)
+        (setq str-val ellipsis)
+      (callf substring str-val 0 (- maxlen (length ellipsis)))
+      (callf concat str-val ellipsis))
+    (callf substring str-val 0 maxlen))
+  str-val)
 
 (provide 'string-utils)
 

@@ -1302,6 +1302,64 @@
             (string-utils-split value ":" nil 'include-separators)))))
 
 
+;;; string-utils-truncate-to
+
+(ert-deftest string-utils-truncate-to-01 nil
+  (should
+   (equal "A very long string"
+          (string-utils-truncate-to "A very long string" 50 "…"))))
+
+(ert-deftest string-utils-truncate-to-02 nil
+  (should
+   (equal "A very long string"
+          (string-utils-truncate-to "A very long string" 18 "…"))))
+
+(ert-deftest string-utils-truncate-to-03 nil
+  (should
+   (equal "A very long stri…"
+          (string-utils-truncate-to "A very long string" 17 "…"))))
+
+(ert-deftest string-utils-truncate-to-04 nil
+  (should
+   (equal "A very long st..."
+          (string-utils-truncate-to "A very long string" 17 "..."))))
+
+(ert-deftest string-utils-truncate-to-05 nil
+  (should
+   (equal "A very lo…"
+          (string-utils-truncate-to "A very long string" 10 "…"))))
+
+(ert-deftest string-utils-truncate-to-06 nil
+  (should
+   (equal "…"
+          (string-utils-truncate-to "A very long string" 1 "…"))))
+
+(ert-deftest string-utils-truncate-to-07 nil
+  (should
+   (equal "..."
+          (string-utils-truncate-to "A very long string" 3 "..."))))
+
+(ert-deftest string-utils-truncate-to-08 nil
+  (should
+   (equal ".."
+          (string-utils-truncate-to "A very long string" 2 "..."))))
+
+(ert-deftest string-utils-truncate-to-09 nil
+  (should
+   (equal "."
+          (string-utils-truncate-to "A very long string" 1 "..."))))
+
+(ert-deftest string-utils-truncate-to-10 nil
+  (should
+   (equal ""
+          (string-utils-truncate-to "A very long string" 0 "..."))))
+
+(ert-deftest string-utils-truncate-to-11 nil
+  (should
+   (equal ""
+          (string-utils-truncate-to "A very long string" 0 "…"))))
+
+
 ;;
 ;; Emacs
 ;;
