@@ -1173,35 +1173,80 @@
 
 (ert-deftest string-utils-squeeze-url-15 nil
   (should
+   (equal "http…"
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 5 "…"))))
+
+(ert-deftest string-utils-squeeze-url-16 nil
+  (should
+   (equal "…"
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 1 "…"))))
+
+(ert-deftest string-utils-squeeze-url-17 nil
+  (should
+   (equal ""
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 0 "…"))))
+
+(ert-deftest string-utils-squeeze-url-18 nil
+  (should
+   (equal "ht..."
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 5 "..."))))
+
+(ert-deftest string-utils-squeeze-url-19 nil
+  (should
+   (equal "h..."
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 4 "..."))))
+
+(ert-deftest string-utils-squeeze-url-20 nil
+  (should
+   (equal "..."
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 3 "..."))))
+
+(ert-deftest string-utils-squeeze-url-21 nil
+  (should
+   (equal ".."
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 2 "..."))))
+
+(ert-deftest string-utils-squeeze-url-22 nil
+  (should
+   (equal "."
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 1 "..."))))
+
+(ert-deftest string-utils-squeeze-url-23 nil
+  (should
+   (equal ""
+          (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 0 "..."))))
+
+(ert-deftest string-utils-squeeze-url-24 nil
+  (should
    (equal "http://www.example.com?var1=v…"
           (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 30 "…"))))
 
-(ert-deftest string-utils-squeeze-url-16 nil
+(ert-deftest string-utils-squeeze-url-25 nil
   (should
    (equal "http://www.example.com?var1=value&var2=value&var3=valu…"
           (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 55 "…"))))
 
-(ert-deftest string-utils-squeeze-url-17 nil
+(ert-deftest string-utils-squeeze-url-26 nil
   (should
    (equal "mail…"
           (string-utils-squeeze-url "mailto:some_user@example.com" 5 "…"))))
 
-(ert-deftest string-utils-squeeze-url-18 nil
+(ert-deftest string-utils-squeeze-url-27 nil
   (should
    (equal "mailto:so…"
           (string-utils-squeeze-url "mailto:some_user@example.com" 10 "…"))))
 
-(ert-deftest string-utils-squeeze-url-19 nil
+(ert-deftest string-utils-squeeze-url-28 nil
   (should
    (equal "mailto:som….com"
           (string-utils-squeeze-url "mailto:some_user@example.com" 15 "…"))))
 
-(ert-deftest string-utils-squeeze-url-20 nil
+(ert-deftest string-utils-squeeze-url-29 nil
   (should
    (equal "mailto:some_use….com"
           (string-utils-squeeze-url "mailto:some_user@example.com" 20 "…"))))
 
-(ert-deftest string-utils-squeeze-url-21 nil
+(ert-deftest string-utils-squeeze-url-30 nil
   (should
    (equal "mailto:some_user@example.com"
           (string-utils-squeeze-url "mailto:some_user@example.com" 30 "…"))))

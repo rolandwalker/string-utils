@@ -866,6 +866,8 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
          (setq prefix (match-string 1 rest-of-string))
          (setq rest-of-string (replace-match "" t t rest-of-string 1))))
       (cond
+        ((>= (length ellipsis) maxlen)
+         (substring ellipsis 0 maxlen))
         ((or (> (length prefix) maxlen)
              (and (= (length prefix) maxlen)
                   (> (length rest-of-string) 0)))
