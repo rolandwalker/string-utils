@@ -529,8 +529,10 @@ ends of all lines throughout STR-VAL."
             str-val)))))
 
 ;;;###autoload
-(defun string-utils-compress-whitespace (str-val &optional whitespace-type)
-  "Return STR-VAL with all contiguous whitespace compressed to one space.
+(defun string-utils-compress-whitespace (str-val &optional whitespace-type separator)
+  "Return STR-VAL with all contiguous whitespace compressed to SEPARATOR.
+
+The default value of SEPARATOR is a single space: \" \".
 
 If optional WHITESPACE-TYPE is 'ascii or t, use an ASCII-only
 definition of whitespace characters.  If WHITESPACE-TYPE is
@@ -538,6 +540,7 @@ definition of whitespace characters.  If WHITESPACE-TYPE is
 `syntax-table'.  Otherwise, use a broad, Unicode-aware
 definition of whitespace from `string-utils-whitespace'."
   (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (callf or separator " ")
   (let* ((string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
                                       string-utils-whitespace-ascii
                                     string-utils-whitespace))
@@ -545,7 +548,7 @@ definition of whitespace from `string-utils-whitespace'."
                                 string-utils-whitespace-syntax
                               (concat "[" string-utils-whitespace "]"))))
     (save-match-data
-      (replace-regexp-in-string (concat whitespace-regexp "+") " "
+      (replace-regexp-in-string (concat whitespace-regexp "+") separator
          str-val))))
 
 ;;;###autoload
