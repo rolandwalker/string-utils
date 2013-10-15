@@ -370,8 +370,10 @@ an ordinary string."
 
     ;; compiled byte-code
     ((byte-code-function-p obj)
-     (mapconcat #'(lambda (x)
-                    (string-utils-stringify-anything x separator ints-are-chars record-separator)) (append obj nil) separator))
+     (let ((output nil))
+       (dolist (elt (append obj nil))
+         (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
+       (mapconcat 'identity (nreverse output) separator)))
 
     ;; keymap, function, frame-configuration
     ((or (keymapp obj)
