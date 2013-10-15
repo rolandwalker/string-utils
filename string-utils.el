@@ -7,7 +7,7 @@
 ;; URL: http://raw.github.com/rolandwalker/string-utils/master/string-utils.el
 ;; Version: 0.2.8
 ;; Last-Updated: 8 Nov 2012
-;; Package-Requires: ((list-utils "0.1.2"))
+;; Package-Requires: ((list-utils "0.3.2"))
 ;; EmacsWiki: StringUtils
 ;; Keywords: extensions
 ;;
@@ -139,7 +139,7 @@
 
 ;;; requirements
 
-;; for callf, callf2, assert, loop
+;; for callf, callf2, assert, loop, decf, incf
 (require 'cl)
 
 (require 'eieio nil t)
@@ -153,6 +153,7 @@
 
 (declare-function object-name-string "eieio.el")
 (declare-function ring-elements      "ring.el")
+(declare-function list-utils-flat-length "list-utils.el")
 
 ;; variables
 
@@ -200,6 +201,25 @@ Includes Unicode whitespace characters.")
 
 (defvar string-utils-whitespace-ascii " \n\t\r\f" "ASCII-only whitespace characters used by string-utils.")
 (defvar string-utils-whitespace-syntax "\\s-"     "Whitespace regular expression according to `syntax-table'.")
+
+;;; compatibility functions
+
+(unless (fboundp 'list-utils-flat-length)
+  (defun list-utils-flat-length (list)
+    "Count simple elements from the beginning of LIST.
+
+Stop counting when a cons is reached.  nil is not a cons,
+and is considered to be a \"simple\" element.
+
+If the car of LIST is a cons, return 0."
+    (let ((counter 0))
+      (ignore-errors
+        (catch 'saw-depth
+          (dolist (elt list)
+            (when (consp elt)
+              (throw 'saw-depth t))
+            (incf counter))))
+      counter)))
 
 ;;; utility functions
 
@@ -390,20 +410,34 @@ an ordinary string."
     ;; list
     ((listp obj)
      (let* ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length))
-            (len (funcall measurer obj)))
-       (if (and (consp obj)
+            (len (funcall measurer obj))
+            (cracked (subseq obj 0 len))                   ; break cycles
+            (flat-extent (list-utils-flat-length cracked))
+            (output nil))
+
+       (cond
+
+         ;; cons or improper list, take care on last element
+         ((and (consp obj)
                 (> len 0)
                 (not (listp (nthcdr len obj))))
-           ;; cons or improper list would choke mapconcat
-           (string-utils-stringify-anything (append (subseq obj 0 len) (list (nthcdr len obj))) separator ints-are-chars record-separator)
-         ;; else
-         ;; accumulate output
-         (let ((output nil))
-           (push (string-utils-stringify-anything (car obj) separator ints-are-chars record-separator) output)
-           (when (> len 1)
-             ;; the subseq is to break cyclic lists
-             (push (string-utils-stringify-anything (subseq obj 1 len) separator ints-are-chars record-separator) output))
-           (mapconcat 'identity (nreverse output) separator)))))
+          (dolist (elt cracked)
+            (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
+          (push (string-utils-stringify-anything (nthcdr len obj) separator ints-are-chars record-separator) output))
+
+         ;; flat list. logic looks a little odd, does the odd thing that I wanted on keymaps
+         ((> flat-extent 1)
+          (decf flat-extent)
+          (dolist (elt (subseq cracked 0 flat-extent))
+            (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
+          (push (string-utils-stringify-anything (nthcdr flat-extent cracked) separator ints-are-chars record-separator) output))
+
+         ;; general case
+         (t
+          (dolist (elt cracked)
+            (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))))
+
+       (mapconcat 'identity (nreverse output) separator)))
 
     ;; defstruct
     ((and (vectorp obj)

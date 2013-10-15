@@ -365,6 +365,33 @@
      (equal "var-1 1\nvar-2 2\nvar-3 3\n"
             (string-utils-stringify-anything value nil nil "\n")))))
 
+(ert-deftest string-utils-stringify-anything-46 nil
+  "Stringify long list"
+  (let ((value (number-sequence 1 5000)))
+    (should
+     (equal "1 2 3 4 5 6 7 8 9 10"
+            (substring (string-utils-stringify-anything value) 0 20)))
+    (should
+     (equal " 4997 4998 4999 5000"
+            (substring (string-utils-stringify-anything value) -20)))
+    (should
+     (= 23892
+        (length (string-utils-stringify-anything value))))))
+
+(ert-deftest string-utils-stringify-anything-47 nil
+  "Stringify long alist"
+  (let ((value nil))
+    (dolist (v (reverse (number-sequence 1 5000)))
+      (push (cons v v) value))
+    (should
+     (equal "1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9 10 1"
+            (substring (string-utils-stringify-anything value) 0 40)))
+    (should
+     (equal " 4997 4997 4998 4998 4999 4999 5000 5000"
+            (substring (string-utils-stringify-anything value) -40)))
+    (should
+     (= 47785
+        (length (string-utils-stringify-anything value))))))
 
 ;;; string-utils-has-darkspace-p
 
