@@ -296,6 +296,10 @@
     (ring-insert value 2)
     (should
      (equal "2 1"
+            (string-utils-stringify-anything value)))
+    (ring-insert value 'keymap)
+    (should
+     (equal "keymap 2 1"
             (string-utils-stringify-anything value)))))
 
 (ert-deftest string-utils-stringify-anything-41 nil

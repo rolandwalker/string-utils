@@ -302,7 +302,10 @@ an ordinary string."
 
     ;; ring
     ((ring-p obj)
-     (string-utils-stringify-anything (ring-elements obj) separator ints-are-chars record-separator))
+     (let ((output nil))
+       (dolist (elt (ring-elements obj))
+         (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
+       (mapconcat 'identity (nreverse output) separator)))
 
     ;; EIEIO object
     ((and (fboundp 'object-p)
