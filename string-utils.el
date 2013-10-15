@@ -151,8 +151,8 @@
 
 ;;; declarations
 
-(declare-function object-name-string "eieio.el")
-(declare-function ring-elements      "ring.el")
+(declare-function object-name-string     "eieio.el")
+(declare-function ring-elements          "ring.el")
 (declare-function list-utils-flat-length "list-utils.el")
 
 ;; variables
@@ -419,8 +419,8 @@ an ordinary string."
 
          ;; cons or improper list, take care on last element
          ((and (consp obj)
-                (> len 0)
-                (not (listp (nthcdr len obj))))
+               (> len 0)
+               (not (listp (nthcdr len obj))))
           (dolist (elt cracked)
             (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
           (push (string-utils-stringify-anything (nthcdr len obj) separator ints-are-chars record-separator) output))
