@@ -151,7 +151,6 @@
 
 ;;; declarations
 
-(declare-function object-name-string     "eieio.el")
 (declare-function eieio-object-name-string "eieio.el")
 (declare-function ring-elements          "ring.el")
 (declare-function list-utils-flat-length "list-utils.el")
@@ -221,6 +220,9 @@ If the car of LIST is a cons, return 0."
               (throw 'saw-depth t))
             (incf counter))))
       counter)))
+
+(unless (fboundp 'eieio-object-name-string)
+  (fset 'eieio-object-name-string 'object-name-string))
 
 ;;; utility functions
 
@@ -331,9 +333,7 @@ an ordinary string."
     ;; EIEIO object
     ((and (fboundp 'object-p)
           (object-p obj))
-     (if (fboundp 'eieio-object-name-string)
-         (eieio-object-name-string obj)
-       (object-name-string obj)))
+     (eieio-object-name-string obj))
 
     ;; font object
     ((fontp obj)
