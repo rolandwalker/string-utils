@@ -152,8 +152,8 @@
 ;;; declarations
 
 (declare-function eieio-object-name-string "eieio.el")
-(declare-function ring-elements          "ring.el")
-(declare-function list-utils-flat-length "list-utils.el")
+(declare-function ring-elements            "ring.el")
+(declare-function list-utils-flat-length   "list-utils.el")
 
 ;; variables
 
