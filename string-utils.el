@@ -152,6 +152,7 @@
 ;;; declarations
 
 (declare-function object-name-string     "eieio.el")
+(declare-function eieio-object-name-string "eieio.el")
 (declare-function ring-elements          "ring.el")
 (declare-function list-utils-flat-length "list-utils.el")
 
@@ -330,7 +331,9 @@ an ordinary string."
     ;; EIEIO object
     ((and (fboundp 'object-p)
           (object-p obj))
-     (object-name-string obj))
+     (if (fboundp 'eieio-object-name-string)
+         (eieio-object-name-string obj)
+       (object-name-string obj)))
 
     ;; font object
     ((fontp obj)
