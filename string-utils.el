@@ -74,6 +74,9 @@
 ;;
 ;; Bugs
 ;;
+;;     (defun string-utils-test-func nil "doc" (keymap 95))
+;;     (string-utils-stringify-anything (symbol-function 'string-utils-test-func))
+;;
 ;;     Some objects such as window-configuration are completely
 ;;     opaque and won't be stringified usefully.
 ;;
