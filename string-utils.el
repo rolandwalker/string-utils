@@ -906,8 +906,8 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
              (setq host (match-string 1 host)))
       (cond
         ((> (length host) 0)
-          (string-match (concat "\\`\\(.*?" (regexp-quote host) "[/?]*\\)") rest-of-string)
-          (setq prefix (match-string 1 rest-of-string))
+         (string-match (concat "\\`\\(.*?" (regexp-quote host) "[/?]*\\)") rest-of-string)
+         (setq prefix (match-string 1 rest-of-string))
          (setq rest-of-string (if (> (length target) 0)
                                   (replace-regexp-in-string "\\`[/?]*" "" target)
                                 (replace-match "" t t rest-of-string 1))))
