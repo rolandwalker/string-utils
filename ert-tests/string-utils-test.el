@@ -1254,7 +1254,7 @@
 
 (ert-deftest string-utils-squeeze-url-25 nil
   (should
-   (equal "http://www.example.com?var1=value&var2=value&var3=valu…"
+   (equal "http://www.example.com?var1=value&var2=value&var3=…alue"
           (string-utils-squeeze-url "http://www.example.com?var1=value&var2=value&var3=value&var4=value&var5=value" 55 "…"))))
 
 (ert-deftest string-utils-squeeze-url-26 nil
