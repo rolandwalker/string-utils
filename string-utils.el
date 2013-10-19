@@ -224,7 +224,8 @@ If the car of LIST is a cons, return 0."
             (incf counter))))
       counter)))
 
-(unless (fboundp 'eieio-object-name-string)
+(when (and (fboundp 'object-name-string)
+           (not (fboundp 'eieio-object-name-string)))
   (fset 'eieio-object-name-string 'object-name-string))
 
 ;;; utility functions
