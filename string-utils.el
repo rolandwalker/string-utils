@@ -279,7 +279,7 @@ an ordinary string."
     ((and
       ints-are-chars
       (or (and (fboundp 'characterp)
-      (characterp obj))
+               (characterp obj))
           (and (integerp obj)
                (> obj 0)
                (<= obj #x3FFFFF))))
