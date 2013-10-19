@@ -153,6 +153,7 @@
           (string-utils-stringify-anything tester nil nil "\n")))))
 
 (ert-deftest string-utils-stringify-anything-27 nil
+  :expected-result (if (fboundp 'font-spec) :passed :failed)
   (should (equal "Monaco"
                  (string-utils-stringify-anything (font-spec :family "Monaco")))))
 
