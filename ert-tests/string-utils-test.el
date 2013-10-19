@@ -165,6 +165,7 @@
                  (string-utils-stringify-anything (symbol-function 'message)))))
 
 (ert-deftest string-utils-stringify-anything-30 nil
+  :expected-result (if (fboundp 'defclass) :passed :failed)
   (let ((value "object_name"))
     (defclass string-utils-tester nil
       ((uid :initarg :uid)))
