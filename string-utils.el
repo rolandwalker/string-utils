@@ -910,9 +910,10 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
   (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (save-match-data
     (let* ((parsed (url-generic-parse-url url))
-           (host (aref parsed 4))
-           (scheme (aref parsed 1))
-           (target (aref parsed 6))
+           (struct-offset (if (symbolp (aref parsed 0)) 1 0))
+           (scheme (aref parsed (+ 0 struct-offset)))
+           (host   (aref parsed (+ 3 struct-offset)))
+           (target (aref parsed (+ 5 struct-offset)))
            (prefix "")
            (rest-of-string url))
       ;; fix host?target parse on older Emacs
