@@ -278,7 +278,11 @@ an ordinary string."
     ;; character
     ((and
       ints-are-chars
+      (or (and (fboundp 'characterp)
       (characterp obj))
+          (and (integerp obj)
+               (> obj 0)
+               (<= obj #x3FFFFF))))
      (string obj))
 
     ;; number
