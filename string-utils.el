@@ -313,6 +313,7 @@ an ordinary string."
 
     ;; network process
     ((and (processp obj)
+          (fboundp 'process-type)
           (eq 'network (process-type obj)))
      (let ((contact (process-contact obj t)))
        (cond
@@ -329,6 +330,7 @@ an ordinary string."
 
     ;; serial process
     ((and (processp obj)
+          (fboundp 'process-type)
           (eq 'serial (process-type obj)))
      (let ((contact (process-contact obj t)))
        (format "%s" (or (plist-get contact :name)

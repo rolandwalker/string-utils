@@ -320,6 +320,7 @@
 
 (ert-deftest string-utils-stringify-anything-42 nil
   "Stringify Network process"
+  :expected-result (if (fboundp 'process-type) :passed :failed)
   (let ((result nil))
     (require 'server)
     (unless (server-running-p server-name)
