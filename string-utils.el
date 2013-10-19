@@ -208,6 +208,13 @@ Includes Unicode whitespace characters.")
 
 ;;; compatibility functions
 
+(unless (fboundp 'string-match-p)
+  ;; added in 23.x
+  (defun string-match-p (regexp string &optional start)
+    "Same as `string-match' except this function does not change the match data."
+    (let ((inhibit-changing-match-data t))
+      (string-match regexp string start))))
+
 (unless (fboundp 'list-utils-flat-length)
   (defun list-utils-flat-length (list)
     "Count simple elements from the beginning of LIST.
