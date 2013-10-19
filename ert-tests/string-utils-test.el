@@ -7,7 +7,6 @@
   (when (fboundp 'package-initialize)
     (package-initialize)))
 
-(require 'eieio)
 (require 'list-utils)
 (require 'obarray-fns)
 (require 'string-utils)
