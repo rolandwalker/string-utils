@@ -348,7 +348,8 @@ an ordinary string."
      (eieio-object-name-string obj))
 
     ;; font object
-    ((fontp obj)
+    ((and (fboundp 'fontp)
+          (fontp obj))
      (string-utils-stringify-anything (or (font-get obj :name)
                                           (font-get obj :family)
                                           "") separator ints-are-chars record-separator))
