@@ -162,6 +162,7 @@
 
 (defvar string-utils-whitespace (concat
                                  (apply 'vector
+                                    (delq nil              ; for Emacs 22, some chars will be missing
                                         (mapcar #'(lambda (x)
                                                     (decode-char 'ucs x))
                                                 '(#x0000d  ; "Carriage Return (CR)"
@@ -197,7 +198,7 @@
                                                   #x02060  ; "Word Joiner"
                                                   #x0feff  ; "Zero Width No-Break Space"
                                                   #x0200b  ; "Zero Width Space"
-                                                  ))))
+                                                  )))))
   "Definition of whitespace characters used by string-utils.
 
 Includes Unicode whitespace characters.")
