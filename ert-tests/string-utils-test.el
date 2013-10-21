@@ -142,6 +142,7 @@
                  (string-utils-stringify-anything (start-process "sleeper" "*sleeper*" "sleep" "10")))))
 
 (ert-deftest string-utils-stringify-anything-26 nil
+  (put 'testing 'char-table-extra-slots 0)
   (let ((tester (make-char-table 'testing)))
     (set-char-table-range tester ?a 3)
     (set-char-table-range tester ?b 3)
