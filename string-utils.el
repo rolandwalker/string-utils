@@ -279,7 +279,7 @@ an ordinary string."
     ((and
       ints-are-chars
       (fboundp 'characterp)
-               (characterp obj))
+      (characterp obj))
      (string obj))
 
     ;; character (22.x Emacs)
