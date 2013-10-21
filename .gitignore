@@ -3,3 +3,4 @@
 /ert-tests/obarray-fns.el
 *-autoloads.el
 *.elc
+*~
