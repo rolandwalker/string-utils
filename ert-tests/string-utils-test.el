@@ -143,8 +143,10 @@
 
 (ert-deftest string-utils-stringify-anything-26 nil
   (let ((tester (make-char-table 'testing)))
-    (set-char-table-range tester '(?a . ?b) 3)
-    (set-char-table-range tester '(?g . ?h) 5)
+    (set-char-table-range tester ?a 3)
+    (set-char-table-range tester ?b 3)
+    (set-char-table-range tester ?g 5)
+    (set-char-table-range tester ?h 5)
   (should
    (equal "a b 3 g h 5"
           (string-utils-stringify-anything tester)))
