@@ -278,12 +278,20 @@ an ordinary string."
     ;; character
     ((and
       ints-are-chars
-      (or (and (fboundp 'characterp)
+      (fboundp 'characterp)
                (characterp obj))
-          (and (integerp obj)
-               (> obj 0)
-               (<= obj #x3FFFFF))))
      (string obj))
+
+    ;; character (22.x Emacs)
+    ((and
+      ints-are-chars
+      (not (fboundp 'characterp))
+      (integerp obj)
+      (> obj 0)
+      (<= obj #x3FFFFF))
+     (if (decode-char 'ucs obj)
+         (string (decode-char 'ucs obj))
+       ""))
 
     ;; number
     ((numberp obj)
