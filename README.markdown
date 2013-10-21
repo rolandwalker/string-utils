@@ -88,6 +88,7 @@ Compatibility and Requirements
 	GNU Emacs version 24.4-devel     : yes, at the time of writing
 	GNU Emacs version 24.3           : yes
 	GNU Emacs version 23.3           : yes
-	GNU Emacs version 22.3 and lower : no
+	GNU Emacs version 22.2           : yes, with some limitations
+	GNU Emacs version 21.x and lower : unknown
 
 Uses if present: [list-utils.el](http://github.com/rolandwalker/list-utils), [obarray-fns.el](http://www.splode.com/~friedman/software/emacs-lisp/src/obarray-fns.el)
