@@ -1,3 +1,4 @@
 /ert-tests/ert.el
 /ert-tests/list-utils.el
 /ert-tests/obarray-fns.el
+*-autoloads.el
