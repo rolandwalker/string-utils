@@ -7,7 +7,7 @@
 ;; URL: http://raw.github.com/rolandwalker/string-utils/master/string-utils.el
 ;; Version: 0.3.0
 ;; Last-Updated: 21 Oct 2013
-;; Package-Requires: ((list-utils "0.3.2"))
+;; Package-Requires: ((list-utils "0.4.2"))
 ;; EmacsWiki: StringUtils
 ;; Keywords: extensions
 ;;
