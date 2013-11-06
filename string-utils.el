@@ -1,6 +1,6 @@
 ;;; string-utils.el --- String-manipulation utilities
 ;;
-;; Copyright (c) 2012 Roland Walker
+;; Copyright (c) 2012-13 Roland Walker
 ;;
 ;; Author: Roland Walker <walker@pobox.com>
 ;; Homepage: http://github.com/rolandwalker/string-utils
