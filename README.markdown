@@ -1,12 +1,10 @@
 [![Build Status](https://secure.travis-ci.org/rolandwalker/string-utils.png?branch=master)](http://travis-ci.org/rolandwalker/string-utils)
 
-Overview
-========
+# Overview
 
 String-manipulation utilities for Emacs Lisp.
 
-Quickstart
-----------
+## Quickstart
 
 ```elisp
 (require 'string-utils)
@@ -24,8 +22,7 @@ Quickstart
   (sit-for 1))
 ```
 
-Explanation
------------
+## Explanation
 
 String-utils is a collection of functions for string manipulation.
 This library has no user-level interface; it is only useful
@@ -82,8 +79,7 @@ Tabs are expanded to spaces according to the value of
 
 Returns a padded copy of string STR-VAL.
 
-Compatibility and Requirements
-------------------------------
+## Compatibility and Requirements
 
 	GNU Emacs version 24.4-devel     : yes, at the time of writing
 	GNU Emacs version 24.3           : yes
