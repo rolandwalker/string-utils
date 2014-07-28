@@ -8,7 +8,7 @@ String-manipulation utilities for Emacs Lisp.
 Quickstart
 ----------
 
-```lisp
+```elisp
 (require 'string-utils)
  
 (string-utils-squeeze-filename (buffer-file-name (current-buffer)) 20)
