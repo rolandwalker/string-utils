@@ -4,6 +4,10 @@
 
 String-manipulation utilities for Emacs Lisp.
 
+ * [Quickstart](#quickstart)
+ * [Explanation](#explanation)
+ * [Compatibility and Requirements](#compatibility-and-requirements)
+
 ## Quickstart
 
 ```elisp
