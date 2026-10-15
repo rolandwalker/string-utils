@@ -55,7 +55,7 @@
 
 (ert-deftest string-utils-stringify-anything-11 nil
   (should
-   (string-match-p "\\`[0-9.-]+\\'" (string-utils-stringify-anything (make-random-state) ""))))
+   (string-match-p "\\`[0-9.-]+\\'" (string-utils-stringify-anything (cl-make-random-state) ""))))
 
 (ert-deftest string-utils-stringify-anything-12 nil
   (should (equal "t t t t t t t t t t"
@@ -383,6 +383,35 @@
     (should
      (= 23892
         (length (string-utils-stringify-anything value))))))
+
+(cl-defstruct string-utils-test-point x y)
+
+(ert-deftest string-utils-stringify-anything-record-01 nil
+  "Stringify a cl-defstruct instance, skipping the type tag"
+  (should (equal "1 two"
+                 (string-utils-stringify-anything
+                  (make-string-utils-test-point :x 1 :y "two")))))
+
+(ert-deftest string-utils-stringify-anything-record-02 nil
+  "Stringify a cl-defstruct instance with a separator"
+  (should (equal "1,2"
+                 (string-utils-stringify-anything
+                  (make-string-utils-test-point :x 1 :y 2) ","))))
+
+(ert-deftest string-utils-stringify-anything-record-03 nil
+  "Stringify a record nested in a list, and a record with nested contents"
+  (should (equal "1 2 3"
+                 (string-utils-stringify-anything
+                  (list (make-string-utils-test-point :x 1 :y 2) 3))))
+  (should (equal "1 2 3"
+                 (string-utils-stringify-anything
+                  (make-string-utils-test-point :x (make-string-utils-test-point :x 1 :y 2) :y 3)))))
+
+(ert-deftest string-utils-stringify-anything-record-04 nil
+  "Stringify a record with no slots"
+  (cl-defstruct string-utils-test-empty)
+  (should (equal ""
+                 (string-utils-stringify-anything (make-string-utils-test-empty)))))
 
 (ert-deftest string-utils-stringify-anything-47 nil
   "Stringify long alist"
