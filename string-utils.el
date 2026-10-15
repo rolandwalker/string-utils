@@ -237,6 +237,45 @@ If the car of LIST is a cons, return 0."
            (not (fboundp 'eieio-object-name-string)))
   (fset 'eieio-object-name-string 'object-name-string))
 
+(defun string-utils--vector-looks-like-obarray-p (vec)
+  "Return non-nil if the vector VEC plausibly is a vector-style obarray.
+In Emacs versions where an obarray is a plain vector, `obarrayp'
+is true of any non-empty vector, so it cannot be used alone to
+tell an obarray from an ordinary vector.  The slots of an obarray
+hold either 0 or an interned symbol, so require that every slot be
+0 or a symbol which `intern-soft' finds in VEC, and that there be at
+least one symbol.
+
+That alone is not enough, because a small vector such as [a] is
+structurally a valid obarray.  A symbol read from source is the
+global one, whereas a symbol in a private obarray is distinct from
+the global symbol of the same name, so also require that no slot hold
+the global symbol (the global obarray itself is the exception).
+
+An all-zero vector is ambiguous (an empty obarray, or a vector of
+zeros) and is treated as an ordinary vector."
+  (or
+   ;; the global obarray: its slots hold global symbols (even `nil'),
+   ;; which the checks below would reject
+   (eq vec (symbol-value 'obarray))
+   (let ((saw-symbol nil)
+         (ok t)
+         (i 0)
+         (len (length vec)))
+     (while (and ok (< i len))
+       (let ((elt (aref vec i)))
+         (cond
+           ((eq elt 0))
+           ((and elt
+                 (symbolp elt)
+                 (eq elt (intern-soft (symbol-name elt) vec))
+                 (not (eq elt (intern-soft (symbol-name elt)))))
+            (setq saw-symbol t))
+           (t
+            (setq ok nil))))
+       (setq i (1+ i)))
+     (and ok saw-symbol))))
+
 ;;; utility functions
 
 ;;;###autoload
@@ -472,6 +511,7 @@ an ordinary string."
 
     ;; defstruct
     ((and (vectorp obj)
+          (> (length obj) 0)
           (symbolp (aref obj 0))
           (string-match-p "\\`cl-" (symbol-name (aref obj 0))))
      (mapconcat #'(lambda (x)
@@ -503,7 +543,9 @@ an ordinary string."
 
     ;; obarray
     ((and (fboundp 'obarrayp)
-          (obarrayp obj))
+          (obarrayp obj)
+          (or (not (vectorp obj))       ; Emacs 30+: obarrays are a distinct type
+              (string-utils--vector-looks-like-obarray-p obj)))
      (let ((output nil))
        (mapatoms #'(lambda (sym)
                      (when (boundp sym)
