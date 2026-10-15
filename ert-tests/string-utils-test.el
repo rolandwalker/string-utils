@@ -171,11 +171,13 @@
 
 (ert-deftest string-utils-stringify-anything-30 nil
   :expected-result (if (fboundp 'defclass) :passed :failed)
-  (let ((value "object_name"))
-    (defclass string-utils-tester nil
-      ((uid :initarg :uid)))
-    (should (equal value
-                   (string-utils-stringify-anything (string-utils-tester value))))))
+  ;; Newer EIEIO ignores a name argument to the constructor and generates
+  ;; the object name, which begins with the class name.
+  (defclass string-utils-tester nil
+    ((uid :initarg :uid)))
+  (should (string-match-p "\\`string-utils-tester"
+                          (string-utils-stringify-anything
+                           (make-instance 'string-utils-tester :uid "object_name")))))
 
 (ert-deftest string-utils-stringify-anything-31 nil
   "Stringify window title"
@@ -457,8 +459,8 @@
   (should (= 1
              (with-temp-buffer
                (emacs-lisp-mode)
-               ;; Narrow No-Break Space
-               (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x0202f)) 'syntax)))))
+               ;; Ogham Space Mark: Unicode whitespace which is not whitespace by syntax
+               (string-utils-has-darkspace-p (string ?\s (decode-char 'ucs #x01680)) 'syntax)))))
 
 (ert-deftest string-utils-has-darkspace-p-13 nil
   (should-not
@@ -545,8 +547,8 @@
   (should-not
    (with-temp-buffer
      (emacs-lisp-mode)
-     ;; Narrow No-Break Space
-     (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x0202f))) 'syntax))))
+     ;; Ogham Space Mark: Unicode whitespace which is not whitespace by syntax
+     (string-utils-has-whitespace-p (concat "text" (string (decode-char 'ucs #x01680))) 'syntax))))
 
 (ert-deftest string-utils-has-whitespace-p-16 nil
   (should-not
@@ -592,11 +594,11 @@
                  (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'ascii))))
 
 (ert-deftest string-utils-trim-whitespace-07 nil
-  (should (equal (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f)))
+  (should (equal (concat "\n text \n words\t\r" (string (decode-char 'ucs #x01680)))
                  (with-temp-buffer
                    (emacs-lisp-mode)
-                   ;; Narrow No-Break Space
-                   (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax)))))
+                   ;; Ogham Space Mark: Unicode whitespace which is not whitespace by syntax
+                   (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x01680))) 'syntax)))))
 
 (ert-deftest string-utils-trim-whitespace-08 nil
   (should (equal "text\nwords"
@@ -610,11 +612,11 @@
                    (string-utils-trim-whitespace "\n text \n words\t\r" 'syntax 'multi-line)))))
 
 (ert-deftest string-utils-trim-whitespace-10 nil
-  (should (equal (concat "\ntext\nwords\t\r" (string (decode-char 'ucs #x0202f)))
+  (should (equal (concat "\ntext\nwords\t\r" (string (decode-char 'ucs #x01680)))
                  (with-temp-buffer
                    (emacs-lisp-mode)
-                   ;; Narrow No-Break Space
-                   (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax 'multi-line)))))
+                   ;; Ogham Space Mark: Unicode whitespace which is not whitespace by syntax
+                   (string-utils-trim-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x01680))) 'syntax 'multi-line)))))
 
 (ert-deftest string-utils-trim-whitespace-11 nil
   (should (equal (concat "text\nwords\t\r" (string (decode-char 'ucs #x0202f)))
@@ -649,11 +651,11 @@
                    (string-utils-compress-whitespace "\n text \n words\t\r" 'syntax)))))
 
 (ert-deftest string-utils-compress-whitespace-06 nil
-  (should (equal (concat "\n text \n words \r" (string (decode-char 'ucs #x0202f)))
+  (should (equal (concat "\n text \n words \r" (string (decode-char 'ucs #x01680)))
                  (with-temp-buffer
                    (emacs-lisp-mode)
-                   ;; Narrow No-Break Space
-                   (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x0202f))) 'syntax)))))
+                   ;; Ogham Space Mark: Unicode whitespace which is not whitespace by syntax
+                   (string-utils-compress-whitespace (concat "\n text \n words\t\r" (string (decode-char 'ucs #x01680))) 'syntax)))))
 
 
 ;;; string-utils-string-repeat
