@@ -780,7 +780,7 @@ Intended to be used in a format string as follows:
       "" "s"))
 
 ;;;###autoload
-(defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis no-tail)
+(defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis no-tail dont-abbreviate-file-name)
   "Intelligibly squeeze file-name or buffer-name NAME to fit within MAXLEN.
 
 When shortening file or buffer names for presentation to human
@@ -817,7 +817,13 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 \"...\" if extended characters are not displayable.
 
 If NO-TAIL is set, do not preserve the trailing letters of
-a filename unless there is a dotted extension."
+a filename unless there is a dotted extension.
+
+If DONT-ABBREVIATE-FILE-NAME is set, do not use `abbreviate-file-name`
+to shorten the name, per step 2 above.  This is useful e.g. when a
+remote process has a prefix matching the local user's HOME but not
+the remote user's HOME so would be incorrect to interpret that as \"~\".
+"
   ;; character x2026 = Horizontal Ellipsis
   (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (cond
@@ -839,7 +845,9 @@ a filename unless there is a dotted extension."
              (added-path ""))
          (when (bufferp name)
            (setq name (buffer-name name)))
-         (setq path (nreverse (split-string (directory-file-name (abbreviate-file-name name)) dir-sep)))
+         (setq path (nreverse (split-string (directory-file-name
+                                             (if dont-abbreviate-file-name name (abbreviate-file-name name)))
+                                            dir-sep)))
          (setq name (pop path))
          (setq orig-name name)
 

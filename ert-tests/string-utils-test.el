@@ -1135,6 +1135,22 @@
   (should (equal "test_long_file_name_…"
                  (string-utils-squeeze-filename "test_long_file_name_no_extension" 21 nil "…" 'no-tail))))
 
+(ert-deftest string-utils-squeeze-filename-82 nil
+  "By default a name under HOME is abbreviated with a tilde."
+  ;; (only meaningful if HOME can be abbreviated; `skip-unless' is missing
+  ;; in Emacs 24.3, so use `when')
+  (let ((name (concat (file-name-as-directory (expand-file-name "~")) "su-test/file.txt")))
+    (when (not (equal name (abbreviate-file-name name)))
+      (should (equal (abbreviate-file-name name)
+                     (string-utils-squeeze-filename name 500))))))
+
+(ert-deftest string-utils-squeeze-filename-83 nil
+  "With DONT-ABBREVIATE-FILE-NAME a name under HOME keeps its full prefix."
+  (let ((name (concat (file-name-as-directory (expand-file-name "~")) "su-test/file.txt")))
+    (when (not (equal name (abbreviate-file-name name)))
+      (should (equal name
+                     (string-utils-squeeze-filename name 500 nil nil nil 'dont-abbreviate-file-name))))))
+
 
 ;;; string-utils-squeeze-url
 
