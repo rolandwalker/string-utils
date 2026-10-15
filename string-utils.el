@@ -143,8 +143,10 @@
 
 ;;; requirements
 
-;; for callf, callf2, assert, loop, decf, incf
-(require 'cl)
+;; for cl-callf, cl-callf2, cl-loop, cl-decf, cl-incf
+(require 'cl-lib)
+;; for cl-assert
+(require 'cl-macs)
 
 (require 'eieio nil t)
 (require 'list-utils nil t)
@@ -230,7 +232,7 @@ If the car of LIST is a cons, return 0."
           (dolist (elt list)
             (when (consp elt)
               (throw 'saw-depth t))
-            (incf counter))))
+            (cl-incf counter))))
       counter)))
 
 (when (and (fboundp 'object-name-string)
@@ -260,8 +262,8 @@ such as hash tables.
 This is not a pretty-printer for OBJ, but a way to look at
 the *contents* of OBJ (so much as is possible) as if it was
 an ordinary string."
-  (callf or separator " ")
-  (callf or record-separator separator)
+  (cl-callf or separator " ")
+  (cl-callf or record-separator separator)
   (cond
 
     ;; nil
@@ -391,7 +393,7 @@ an ordinary string."
                     (push (string-utils-stringify-anything v separator ints-are-chars record-separator) output)) obj)
        (mapconcat 'identity
                   (nbutlast
-                   (loop for (k v) on (nreverse output) by 'cddr
+                   (cl-loop for (k v) on (nreverse output) by 'cddr
                          collect k
                          collect separator
                          collect v
@@ -407,7 +409,7 @@ an ordinary string."
                            (push (string-utils-stringify-anything v separator ints-are-chars record-separator) output)) obj)
        (mapconcat 'identity
                   (nbutlast
-                   (loop for (k v) on (nreverse output) by 'cddr
+                   (cl-loop for (k v) on (nreverse output) by 'cddr
                          collect k
                          collect separator
                          collect v
@@ -442,7 +444,7 @@ an ordinary string."
     ((listp obj)
      (let* ((measurer (if (fboundp 'list-utils-safe-length) 'list-utils-safe-length 'safe-length))
             (len (funcall measurer obj))
-            (cracked (subseq obj 0 len))                   ; break cycles
+            (cracked (cl-subseq obj 0 len))                   ; break cycles
             (flat-extent (list-utils-flat-length cracked))
             (output nil))
 
@@ -458,8 +460,8 @@ an ordinary string."
 
          ;; flat list. logic looks a little odd, does the odd thing that I wanted on keymaps
          ((> flat-extent 1)
-          (decf flat-extent)
-          (dolist (elt (subseq cracked 0 flat-extent))
+          (cl-decf flat-extent)
+          (dolist (elt (cl-subseq cracked 0 flat-extent))
             (push (string-utils-stringify-anything elt separator ints-are-chars record-separator) output))
           (push (string-utils-stringify-anything (nthcdr flat-extent cracked) separator ints-are-chars record-separator) output))
 
@@ -493,7 +495,7 @@ an ordinary string."
                        (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))) obj)
        (mapconcat 'identity
                   (nbutlast
-                   (loop for (k v) on output by 'cddr
+                   (cl-loop for (k v) on output by 'cddr
                          collect k
                          collect separator
                          collect v
@@ -511,7 +513,7 @@ an ordinary string."
                        (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))) obj)
        (mapconcat 'identity
                   (nbutlast
-                   (loop for (k v) on output by 'cddr
+                   (cl-loop for (k v) on output by 'cddr
                          collect k
                          collect separator
                          collect v
@@ -540,7 +542,7 @@ definition of whitespace characters.  If WHITESPACE-TYPE is
 'syntax, is the definition of whitespace from the current
 `syntax-table'.  Otherwise, use a broad, Unicode-aware
 definition of whitespace from `string-utils-whitespace'."
-  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (cl-assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
   (let* ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
          (string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
                                       string-utils-whitespace-ascii
@@ -562,7 +564,7 @@ definition of whitespace characters.  If WHITESPACE-TYPE is
 'syntax, is the definition of whitespace from the current
 `syntax-table'.  Otherwise, use a broad, Unicode-aware
 definition of whitespace from `string-utils-whitespace'."
-  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (cl-assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
   (let* ((str-val (if (stringp obj) obj (string-utils-stringify-anything obj "")))
          (string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
                                       string-utils-whitespace-ascii
@@ -584,7 +586,7 @@ definition of whitespace from `string-utils-whitespace'.
 
 If optional MULTI-LINE is set, trim spaces at starts and
 ends of all lines throughout STR-VAL."
-  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (cl-assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
   (let* ((string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
                                       string-utils-whitespace-ascii
                                     string-utils-whitespace))
@@ -609,8 +611,8 @@ definition of whitespace characters.  If WHITESPACE-TYPE is
 'syntax, is the definition of whitespace from the current
 `syntax-table'.  Otherwise, use a broad, Unicode-aware
 definition of whitespace from `string-utils-whitespace'."
-  (assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
-  (callf or separator " ")
+  (cl-assert (memq whitespace-type '(ascii ascii-only t syntax unicode nil)) nil "Bad WHITESPACE-TYPE")
+  (cl-callf or separator " ")
   (let* ((string-utils-whitespace (if (memq whitespace-type '(ascii ascii-only t))
                                       string-utils-whitespace-ascii
                                     string-utils-whitespace))
@@ -676,8 +678,8 @@ Returns a padded copy of string STR-VAL."
     (when (and throw-error
                (> (length str-val) width))
       (error "STR-VAL too wide"))
-    (callf or char ?\s)
-    (callf or mode 'right)
+    (cl-callf or char ?\s)
+    (cl-callf or mode 'right)
     (let ((total-pad 0)
           (left-pad 0)
           (right-pad 0))
@@ -732,18 +734,18 @@ Returns padded STR-LIST."
     (let ((width target-width)
           (max-width nil)
           (orig-mode mode))
-      (callf2 mapcar #'(lambda (str)
+      (cl-callf2 mapcar #'(lambda (str)
                          (replace-regexp-in-string "\t" (make-string tab-width ?\s) str)) str-list)
       (setq max-width (apply 'max (mapcar #'length str-list)))
       (unless width
-        (callf or additional-width 0)
+        (cl-callf or additional-width 0)
         (setq width (+ additional-width max-width)))
       (when (and (numberp mode)
                  (> (+ (abs mode) max-width) width))
         (when throw-error
           (error "Fixed-position padding is too wide"))
         (setq mode (abs mode))
-        (decf mode (- (+ (abs mode) max-width) width))
+        (cl-decf mode (- (+ (abs mode) max-width) width))
         (when (< mode 0)
           (setq mode 0))
         (when (< orig-mode 0)
@@ -819,7 +821,7 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 If NO-TAIL is set, do not preserve the trailing letters of
 a filename unless there is a dotted extension."
   ;; character x2026 = Horizontal Ellipsis
-  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (cl-callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (cond
     ;; corner cases for tiny MAXLEN
     ((< maxlen 0)
@@ -895,15 +897,15 @@ a filename unless there is a dotted extension."
                (setq extension ""))
              (when (and (>= (+ (length extension) (length ellipsis)) maxlen)
                         (> (length ellipsis) 1))
-               (callf substring ellipsis 0 (1- (length ellipsis))))
+               (cl-callf substring ellipsis 0 (1- (length ellipsis))))
              (when (and (<= (- maxlen (length ellipsis) (length extension))
                             (length added-path))
                         (> (length ellipsis) 1))
-               (callf substring ellipsis 0 (1- (length ellipsis))))
+               (cl-callf substring ellipsis 0 (1- (length ellipsis))))
 
              ;; truncate and add back ellipsis and extension
-             (callf substring name 0 (- maxlen (length ellipsis) (length extension)))
-             (callf concat name ellipsis extension)))))
+             (cl-callf substring name 0 (- maxlen (length ellipsis) (length extension)))
+             (cl-callf concat name ellipsis extension)))))
 
      ;; hardcode one last corner case
      (when (equal name ".../.")
@@ -922,7 +924,7 @@ Follows rules similar to `string-utils-squeeze-filename'.
 ELLIPSIS is a string inserted wherever characters were removed.
 It defaults to the UCS character \"Horizontal Ellipsis\", or
 \"...\" if extended characters are not displayable."
-  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (cl-callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (save-match-data
     (let* ((parsed (url-generic-parse-url url))
            (struct-offset (if (symbolp (aref parsed 0)) 1 0))
@@ -954,8 +956,8 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
              (and (= (length prefix) maxlen)
                   (> (length rest-of-string) 0)))
          ;; todo could drop leading "www" and attempt to preserve domain name
-         (callf substring url 0 (- maxlen (length ellipsis)))
-         (callf concat url ellipsis)
+         (cl-callf substring url 0 (- maxlen (length ellipsis)))
+         (cl-callf concat url ellipsis)
          url)
         (t
          (concat prefix
@@ -969,9 +971,9 @@ The escape character is backslash \(\\\)."
     (while list-val
       (let ((top (pop list-val)))
         (while (string-match-p "\\\\\\'" top)
-          (callf concat top separator)
+          (cl-callf concat top separator)
           (when list-val
-            (callf concat top (pop list-val))))
+            (cl-callf concat top (pop list-val))))
         (push top ret-val)))
     (setq ret-val (nreverse ret-val))))
 
@@ -999,7 +1001,7 @@ limitation that SEPARATORS must be an explicit string rather than
 a regular expression."
   (cond
     (respect-escapes
-     (assert separators nil "SEPARATORS must be a string")
+     (cl-assert separators nil "SEPARATORS must be a string")
      (string-utils--repair-split-list (split-string string separators omit-nulls) separators))
     (t
      (split-string string separators omit-nulls))))
@@ -1015,13 +1017,13 @@ ELLIPSIS is a string inserted wherever characters were removed.
 It defaults to the UCS character \"Horizontal Ellipsis\", or
 \"...\" if extended characters are not displayable."
   ;; character x2026 = Horizontal Ellipsis
-  (callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
+  (cl-callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (when (> (length str-val) maxlen)
     (if (>= (length ellipsis) maxlen)
         (setq str-val ellipsis)
-      (callf substring str-val 0 (- maxlen (length ellipsis)))
-      (callf concat str-val ellipsis))
-    (callf substring str-val 0 maxlen))
+      (cl-callf substring str-val 0 (- maxlen (length ellipsis)))
+      (cl-callf concat str-val ellipsis))
+    (cl-callf substring str-val 0 maxlen))
   str-val)
 
 (provide 'string-utils)
@@ -1038,7 +1040,7 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 ;; End:
 ;;
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
-;; LocalWords: propertize fillin callf MULTI MAXLEN mapconcat progn
+;; LocalWords: propertize fillin cl-callf cl-callf2 MULTI MAXLEN mapconcat progn
 ;; LocalWords: defstruct stringified Stringification INTS ascii subr
 ;; LocalWords: devel eieio EIEIO subseq obarray
 ;;
