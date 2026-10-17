@@ -79,12 +79,13 @@
           (string-utils-stringify-anything tester nil nil "\n")))))
 
 (ert-deftest string-utils-stringify-anything-15 nil
-  (should (equal ""
-                 (string-utils-stringify-anything (make-byte-code nil nil nil nil) ""))))
+  ;; a valid byte-code object has a string and a vector, and a numeric depth
+  (should (equal "0"
+                 (string-utils-stringify-anything (make-byte-code nil "" [] 0) ""))))
 
 (ert-deftest string-utils-stringify-anything-16 nil
   (should (equal "args...0"
-                 (string-utils-stringify-anything (make-byte-code '(args) nil nil 0) "."))))
+                 (string-utils-stringify-anything (make-byte-code '(args) "" [] 0) "."))))
 
 (ert-deftest string-utils-stringify-anything-17 nil
   (should (string-match-p "\\`1 +\\*temp\\*"
@@ -371,6 +372,54 @@
     (should
      (equal "var-1 1\nvar-2 2\nvar-3 3\n"
             (string-utils-stringify-anything value nil nil "\n")))))
+
+(ert-deftest string-utils-stringify-anything-vector-01 nil
+  "A vector of numbers is not mistaken for an obarray"
+  (should (equal "1 2 3"
+                 (string-utils-stringify-anything [1 2 3]))))
+
+(ert-deftest string-utils-stringify-anything-vector-02 nil
+  "A vector of symbols which are not in it is not mistaken for an obarray"
+  (should (equal "a b"
+                 (string-utils-stringify-anything [a b]))))
+
+(ert-deftest string-utils-stringify-anything-vector-03 nil
+  "An empty vector does not signal an error"
+  (should (equal ""
+                 (string-utils-stringify-anything []))))
+
+(ert-deftest string-utils-stringify-anything-vector-04 nil
+  "Vectors containing nil and t"
+  (should (equal " t"
+                 (string-utils-stringify-anything [nil t]))))
+
+(ert-deftest string-utils-stringify-anything-vector-05 nil
+  "An all-zero vector is ambiguous and is stringified as a vector"
+  (should (equal "0 0 0"
+                 (string-utils-stringify-anything [0 0 0]))))
+
+(ert-deftest string-utils-stringify-anything-vector-07 nil
+  "Small vectors of global symbols are not mistaken for obarrays"
+  (should (equal "t" (string-utils-stringify-anything [t])))
+  (should (equal "a" (string-utils-stringify-anything [a])))
+  (should (equal "t t" (string-utils-stringify-anything [t t]))))
+
+(ert-deftest string-utils-stringify-anything-vector-08 nil
+  "A private obarray is recognized even when it holds a name that is also global"
+  (let ((value (make-vector 7 0)))
+    (set (intern "car" value) 1)
+    (should (equal "car 1"
+                   (string-utils-stringify-anything value)))))
+
+(ert-deftest string-utils-stringify-anything-vector-06 nil
+  "A compiled function with an empty constants vector can be stringified"
+  ;; this file is not lexical-binding, so build a lexical closure explicitly
+  ;; (`skip-unless' is missing in Emacs 24.3, so use `when')
+  (let ((compiled (byte-compile (eval '(lambda (x) (+ x 1)) t))))
+    (when (and (byte-code-function-p compiled)
+               (vectorp (aref compiled 2))
+               (= 0 (length (aref compiled 2))))
+      (should (stringp (string-utils-stringify-anything compiled))))))
 
 (ert-deftest string-utils-stringify-anything-46 nil
   "Stringify long list"
