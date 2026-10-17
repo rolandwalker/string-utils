@@ -519,6 +519,15 @@ an ordinary string."
      (mapconcat #'(lambda (x)
                     (string-utils-stringify-anything x separator ints-are-chars record-separator)) (cdr (append obj nil)) separator))
 
+    ;; record, as made by `cl-defstruct' since Emacs 26.  Like the vector
+    ;; version above, skip the type tag in slot 0.
+    ((and (fboundp 'recordp)
+          (recordp obj))
+     (let ((output nil))
+       (dotimes (i (1- (length obj)))
+         (push (string-utils-stringify-anything (aref obj (1+ i)) separator ints-are-chars record-separator) output))
+       (mapconcat 'identity (nreverse output) separator)))
+
     ;; bool-vector
     ((bool-vector-p obj)
      (mapconcat #'(lambda (x)
