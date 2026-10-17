@@ -1,4 +1,4 @@
-;;; string-utils.el --- String-manipulation utilities
+;;; string-utils.el --- String-manipulation utilities  -*- lexical-binding: t -*-
 ;;
 ;; Copyright (c) 2012-13 Roland Walker
 ;;
@@ -7,7 +7,7 @@
 ;; URL: http://raw.githubusercontent.com/rolandwalker/string-utils/master/string-utils.el
 ;; Version: 0.3.2
 ;; Last-Updated: 22 Oct 2013
-;; Package-Requires: ((list-utils "0.4.2"))
+;; Package-Requires: ((emacs "24.3") (list-utils "0.4.2"))
 ;; EmacsWiki: StringUtils
 ;; Keywords: extensions
 ;;
@@ -65,13 +65,23 @@
 ;;
 ;; Compatibility and Requirements
 ;;
-;;     GNU Emacs version 24.4-devel     : yes, at the time of writing
-;;     GNU Emacs version 24.3           : yes
-;;     GNU Emacs version 23.3           : yes
-;;     GNU Emacs version 22.2           : yes, with some limitations
-;;     GNU Emacs version 21.x and lower : unknown
+;;     GNU Emacs version 28.2           : yes, tested
+;;     GNU Emacs version 27.1           : yes, tested
+;;     GNU Emacs version 25.x and 26.x  : untested, expected to work
+;;     GNU Emacs version 24.3           : yes, tested
+;;     GNU Emacs version 24.2 and lower : no, requires cl-lib (built in from 24.3)
 ;;
-;;     Uses if present: list-utils.el, obarray-fns.el
+;;     "Tested" means the ERT suite in ert-tests/ passes.
+;;
+;;     Requires: list-utils.el, for correct handling of circular lists
+;;     (without it, a circular list is stringified with some elements
+;;     repeated).
+;;
+;;     Uses if present: obarray-fns.el
+;;
+;;     Before Emacs 26, `obarrayp' is provided only by obarray-fns.el.
+;;     Without it, `string-utils-stringify-anything' stringifies an
+;;     obarray like an ordinary vector.
 ;;
 ;; Bugs
 ;;
@@ -834,14 +844,15 @@ and PROPERTIES arguments to `propertize'."
 
 Intended to be used in a format string as follows:
 
-    (message \"%s item%s deleted\" del-counter (string-utils-plural-ending del-counter))"
+    (message \"%s item%s deleted\"
+             del-counter (string-utils-plural-ending del-counter))"
   (if (and (numberp num)
            (= num 1))
       "" "s"))
 
 ;;;###autoload
 (defun string-utils-squeeze-filename (name maxlen &optional path-removal ellipsis no-tail dont-abbreviate-file-name)
-  "Intelligibly squeeze file-name or buffer-name NAME to fit within MAXLEN.
+  "Intelligibly squeeze file name or buffer name NAME to fit within MAXLEN.
 
 When shortening file or buffer names for presentation to human
 readers, it is often preferable not to truncate the ends, but to
@@ -879,11 +890,10 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 If NO-TAIL is set, do not preserve the trailing letters of
 a filename unless there is a dotted extension.
 
-If DONT-ABBREVIATE-FILE-NAME is set, do not use `abbreviate-file-name`
+If DONT-ABBREVIATE-FILE-NAME is set, do not use `abbreviate-file-name'
 to shorten the name, per step 2 above.  This is useful e.g. when a
 remote process has a prefix matching the local user's HOME but not
-the remote user's HOME so would be incorrect to interpret that as \"~\".
-"
+the remote user's HOME so would be incorrect to interpret that as \"~\"."
   ;; character x2026 = Horizontal Ellipsis
   (cl-callf or ellipsis (if (char-displayable-p (decode-char 'ucs #x2026)) (string (decode-char 'ucs #x2026)) "..."))
   (cond
@@ -1065,6 +1075,7 @@ When RESPECT-ESCAPES is set, STRING is not split where the
 separator is escaped with backslash.  This currently has the
 limitation that SEPARATORS must be an explicit string rather than
 a regular expression."
+  (ignore include-separators)           ; unimplemented, but part of the signature
   (cond
     (respect-escapes
      (cl-assert separators nil "SEPARATORS must be a string")
@@ -1074,7 +1085,7 @@ a regular expression."
 
 ;;;###autoload
 (defun string-utils-truncate-to (str-val maxlen &optional ellipsis)
-  "Truncate STRING to MAXLEN.
+  "Truncate STR-VAL to MAXLEN.
 
 The returned value is of length MAXLEN or less, including
 ELLIPSIS.
@@ -1102,7 +1113,6 @@ It defaults to the UCS character \"Horizontal Ellipsis\", or
 ;; mangle-whitespace: t
 ;; require-final-newline: t
 ;; coding: utf-8
-;; byte-compile-warnings: (not cl-functions redefine)
 ;; End:
 ;;
 ;; LocalWords: StringUtils ARGS alist utils darkspace quotemeta bool
