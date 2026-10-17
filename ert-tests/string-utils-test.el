@@ -7,6 +7,7 @@
   (when (fboundp 'package-initialize)
     (package-initialize)))
 
+(require 'cl-lib)
 (require 'list-utils)
 (require 'obarray-fns)
 (require 'string-utils)
@@ -222,8 +223,8 @@
 
 (ert-deftest string-utils-stringify-anything-35 nil
   "Don't modify improper lists"
-  (should (equal (list* 1 2 3)
-                 (let ((improper (list* 1 2 3)))
+  (should (equal (cl-list* 1 2 3)
+                 (let ((improper (cl-list* 1 2 3)))
                    (string-utils-stringify-anything improper)
                    improper))))
 
@@ -240,8 +241,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 (ert-deftest string-utils-stringify-anything-37 nil
   "Don't modify cyclic lists"
@@ -256,8 +257,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 (ert-deftest string-utils-stringify-anything-38 nil
   "Don't modify cyclic lists, handle cyclic lists of one element"
@@ -272,8 +273,8 @@
             (list-utils-linear-subseq cyclic-2)))
     (should
      (equal
-      (subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
-      (subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-1) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-1)))
+      (cl-subseq (list-utils-cyclic-subseq cyclic-2) 0 (list-utils-safe-length (list-utils-cyclic-subseq cyclic-2)))))))
 
 (ert-deftest string-utils-stringify-anything-39 nil
   "Stringify buffer name"
