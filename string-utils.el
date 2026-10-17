@@ -535,13 +535,20 @@ an ordinary string."
 
     ;; abbrev-table
     ((ignore-errors (abbrev-table-p obj))
-     (let ((output nil))
+     (let ((output nil)
+           (syms nil))
+       ;; `mapatoms' visits symbols in an unspecified order which varies with
+       ;; the obarray size and hashing, so sort by name to make the result
+       ;; deterministic.  OUTPUT is built in reverse, so process the symbols
+       ;; in descending order to end up with ascending order.
        (mapatoms #'(lambda (sym)
                      (when (> (length (symbol-name sym)) 0)
-                       (if (stringp (symbol-value sym))
-                           (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars record-separator) output)
-                         (push (string-utils-stringify-anything (symbol-function sym) separator ints-are-chars record-separator) output))
-                       (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))) obj)
+                       (push sym syms))) obj)
+       (dolist (sym (sort syms #'(lambda (a b) (string< (symbol-name b) (symbol-name a)))))
+         (if (stringp (symbol-value sym))
+             (push (string-utils-stringify-anything (symbol-value sym) separator ints-are-chars record-separator) output)
+           (push (string-utils-stringify-anything (symbol-function sym) separator ints-are-chars record-separator) output))
+         (push (string-utils-stringify-anything sym separator ints-are-chars record-separator) output))
        (mapconcat 'identity
                   (nbutlast
                    (cl-loop for (k v) on output by 'cddr

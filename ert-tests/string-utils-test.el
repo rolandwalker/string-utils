@@ -317,12 +317,27 @@
             (string-utils-stringify-anything value)))
     (define-abbrev value "twoo" "two")
     (define-abbrev value "threee" "three")
+    ;; output is sorted by abbrev name
     (should
-     (equal "twoo two threee three"
+     (equal "threee three twoo two"
             (string-utils-stringify-anything value)))
     (should
-     (equal "twoo two\nthreee three\n"
+     (equal "threee three\ntwoo two\n"
             (string-utils-stringify-anything value nil nil "\n")))))
+
+(ert-deftest string-utils-stringify-anything-41b nil
+  "Stringifying an abbrev table does not depend on definition order"
+  (let ((forward (make-abbrev-table))
+        (backward (make-abbrev-table))
+        (names '("alpha" "bravo" "charlie" "delta" "echo" "foxtrot" "golf")))
+    (dolist (name names)
+      (define-abbrev forward name (upcase name)))
+    (dolist (name (reverse names))
+      (define-abbrev backward name (upcase name)))
+    (should (equal "alpha ALPHA bravo BRAVO charlie CHARLIE delta DELTA echo ECHO foxtrot FOXTROT golf GOLF"
+                   (string-utils-stringify-anything forward)))
+    (should (equal (string-utils-stringify-anything forward)
+                   (string-utils-stringify-anything backward)))))
 
 (ert-deftest string-utils-stringify-anything-42 nil
   "Stringify Network process"
